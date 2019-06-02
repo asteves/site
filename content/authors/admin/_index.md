@@ -1,8 +1,7 @@
 ---
 authors:
 - admin
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+bio: ""
 education: ""
 
 email: ""
@@ -25,6 +24,6 @@ user_groups:
 - Visitors
 ---
 
-I am a PhD Student at UC Berkeley. My primary research interests are military organizations, the determinants of political violence, non-state actors, and causal inference. I am also interested in creating tools to make software easier to use for non-technical political scientists. 
+I am a PhD Student in the Travers Deparment of Political Science at UC Berkeley. My primary research interests are military organizations, the determinants of political violence, non-state actors, and causal inference. I am also interested in creating tools to make software easier to use for non-technical political scientists. 
 
 
