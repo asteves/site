@@ -34,6 +34,38 @@
   </url>
   
   <url>
+    <loc>/categories/</loc>
+    <lastmod>2019-06-02T17:16:48-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/post/learning-r-dealing-playcards/</loc>
+    <lastmod>2019-06-02T17:16:48-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2019-06-02T17:16:48-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2019-06-02T17:16:48-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/post/randomization-inference-a-simple-example/</loc>
+    <lastmod>2019-06-02T16:53:59-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/using-pdftools-to-extract-vote-data/</loc>
+    <lastmod>2019-06-02T16:43:30-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/authors/admin/</loc>
     <lastmod>2019-04-07T00:00:00+00:00</lastmod>
   </url>
@@ -151,16 +183,7 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/courses/</loc>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
   </url>
   
 </urlset>

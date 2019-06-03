@@ -116,7 +116,7 @@
   <meta property="og:description" content="PhD Student"><meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
-  <meta property="og:updated_time" content="2015-07-23T21:13:14-05:00">
+  <meta property="og:updated_time" content="2019-06-02T00:00:00&#43;00:00">
   
 
   
@@ -277,7 +277,7 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/#projects">
+          <a class="nav-link " href="/#project">
             
             <span>Research</span>
             
@@ -288,92 +288,24 @@
         
 
         
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
-            
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#featured">
-            
-            <span>Publications</span>
-            
-          </a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/courses/">
+        <li class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
             
             <span>Courses</span>
             
+            <span class="caret"></span>
           </a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        
-        
-        
-        
-        
-        
-          
-          
-          
+          <ul class="dropdown-menu">
             
-          
-          
-        
-
-        <li class="nav-item">
-          <a class="nav-link " href="/#contact">
+            <li class="dropdown-item my-0 py-0 mx-0 px-0">
+              <a href="/courses/PS5">
+                
+                <span>PS5</span>
+                
+              </a>
+            </li>
             
-            <span>Contact</span>
-            
-          </a>
+          </ul>
         </li>
 
         
@@ -443,12 +375,31 @@
   
   
   <div>
-    <h2><a href="/post/2015-07-23-r-rmarkdown/">Hello R Markdown</a></h2>
+    <h2><a href="/post/learning-r-dealing-playcards/">Learning R: Dealing Playcards</a></h2>
     <div class="article-style">
       
-      R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.
+      Introduction There are lots of benefits to learning a computer language, even if only learning enough to make yourself dangerous to your own computer. In this post, I&rsquo;ll provide a purposely dumb way to shuffle playing cards and deal hands to different players. In doing so, I will demonstrate a variety of basic operations in the R language.
+# This is a comment. We write comments for future programmers # to be able to read and understand our code.
+      
+    </div>
+  </div>
+  
+  <div>
+    <h2><a href="/post/randomization-inference-a-simple-example/">Randomization Inference: A Simple Example</a></h2>
+    <div class="article-style">
+      
+      Introduction This simulation is an example of randomization inference.
+set.seed(8675309) library(dplyr) library(ggplot2) library(readr)  To understand how the public perceives Donald Trump&rsquo;s tweets, YouGov runs a poll that asks a representative sample of the US population to rate each tweet the day they are published. Trump&rsquo;s writing style when tweeting is often hyperbolic, with certain words in all-caps and extending out others (&ldquo;sooooo&rdquo;) for effect.
+To show how randomization inference works, let&rsquo;s simulate some Trump tweets based on the YouGov scoring system.
+      
+    </div>
+  </div>
+  
+  <div>
+    <h2><a href="/post/using-pdftools-to-extract-vote-data/">Using pdftools to Extract Vote Data</a></h2>
+    <div class="article-style">
+      
+      Introduction Suppose you are a concerned citizen who would like to know how voters in a state voted. Perhaps you are a voter in a state with rampant corruption or perhaps you are a voter in a state that does not have paper backups for voting machines. Perhaps you are just masochistic enough to be interested in pulling tables out of reasonably well formed pdfs. The following is a code example for the last one.
       
     </div>
   </div>

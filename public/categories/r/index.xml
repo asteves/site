@@ -6,59 +6,459 @@
     <description>Recent content in R on Alex Stephenson</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Sun, 02 Jun 2019 00:00:00 +0000</lastBuildDate>
     
 	    <atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      <title>Learning R: Dealing Playcards</title>
+      <link>/post/learning-r-dealing-playcards/</link>
+      <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
+      <guid>/post/learning-r-dealing-playcards/</guid>
       <description>
 
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 
-&lt;div id=&#34;r-markdown&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;R Markdown&lt;/h1&gt;
-&lt;p&gt;This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see &lt;a href=&#34;http://rmarkdown.rstudio.com&#34; class=&#34;uri&#34;&gt;http://rmarkdown.rstudio.com&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can embed an R code chunk like this:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(cars)
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-fit &amp;lt;- lm(dist ~ speed, data = cars)
-fit
+&lt;p&gt;There are lots of benefits to learning a computer language, even if only learning enough to make yourself dangerous to your own computer. In this post, I&amp;rsquo;ll provide a purposely dumb way to shuffle playing cards and deal hands to different players. In doing so, I will demonstrate a variety of basic operations in the R language.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# This is a comment. We write comments for future programmers 
+# to be able to read and understand our code. 
+# The most common future programmer to read your code is you 
+# in the future. 
+# Be nice to future you. 
+
+# Comments in R start with a #. 
+# R will ignore everything after a # on the same line
+
+# These next lines set a random number seed 
+# and then sample 10 numbers from 1 to 100 with replacement. 
+#As a result, we might get the same number more than once. 
+
+set.seed(106108)
+sample(x = 1:100, size = 10,replace = TRUE, prob = NULL)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##  [1] 83 18 20  2 69 93 20 93 68 33
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;sample() is a function, or a tool to get stuff done. We can tell something is a function because it has () immediately following it. Note that functions are case sensitive. R does not know what Sample() means. sample comes with the base R distribution, which means you don&amp;rsquo;t have to write it yourself. sample takes four arguments. When googling you may also see arguments referred to as parameters. They are the information the function needs to work.&lt;/p&gt;
+
+&lt;p&gt;The four arguments are x, which is a vector of elements. In this case x is every number from 1 to 100. The second argument is size, which is the number of elements we want. In our case, that is 10 numbers. The third argument is replace, which determines whether we want to sample with or without replacement. The final argument is prob, which we ignore by setting it to NULL.&lt;/p&gt;
+
+&lt;h2 id=&#34;dealing-cards&#34;&gt;Dealing Cards&lt;/h2&gt;
+
+&lt;p&gt;Sampling with replacement comes up a lot in applications with simple random sampling, but for dealing cards we want to sample without replacement. When we deal a playing card, we do not deal that playing card again to another player.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s use R to assign playing cards at random for practice. First, we need to create a vector of playing cards. This will be a string vector, which means that each element will be a piece of text instead of just a number. To R, &amp;ldquo;10&amp;rdquo; is different than 10.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# First, create a vector of cards and assign it the variable cards 
+cardTypes &amp;lt;- c(2:10, &amp;quot;J&amp;quot;,&amp;quot;Q&amp;quot;,&amp;quot;K&amp;quot;, &amp;quot;A&amp;quot;)
+
+# R now knows about the existence of cardTypes. 
+# We will print out the vector to confirm 
+print(cardTypes)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;2&amp;quot;  &amp;quot;3&amp;quot;  &amp;quot;4&amp;quot;  &amp;quot;5&amp;quot;  &amp;quot;6&amp;quot;  &amp;quot;7&amp;quot;  &amp;quot;8&amp;quot;  &amp;quot;9&amp;quot;  &amp;quot;10&amp;quot; &amp;quot;J&amp;quot;  &amp;quot;Q&amp;quot;  &amp;quot;K&amp;quot;  &amp;quot;A&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, we need to attach the suit to each card. In R, one way to combine text is to use paste(). Note that paste() has parentheses, so it is a function. To look up what arguments we need we type ?paste into the console.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Attach suits to each card 
+hearts = paste(cardTypes, &amp;quot;H&amp;quot;, sep = &amp;quot;&amp;quot;)
+spades = paste(cardTypes, &amp;quot;S&amp;quot;, sep = &amp;quot;&amp;quot;)
+clubs = paste(cardTypes, &amp;quot;C&amp;quot;, sep = &amp;quot;&amp;quot;)
+diamonds = paste(cardTypes, &amp;quot;D&amp;quot;, sep = &amp;quot;&amp;quot;)
+
+# combine our playing cards into one vector  
+playingCards = c(hearts, spades, clubs, diamonds)
+print(playingCards)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;2H&amp;quot;  &amp;quot;3H&amp;quot;  &amp;quot;4H&amp;quot;  &amp;quot;5H&amp;quot;  &amp;quot;6H&amp;quot;  &amp;quot;7H&amp;quot;  &amp;quot;8H&amp;quot;  &amp;quot;9H&amp;quot;  &amp;quot;10H&amp;quot; &amp;quot;JH&amp;quot;  &amp;quot;QH&amp;quot; 
+## [12] &amp;quot;KH&amp;quot;  &amp;quot;AH&amp;quot;  &amp;quot;2S&amp;quot;  &amp;quot;3S&amp;quot;  &amp;quot;4S&amp;quot;  &amp;quot;5S&amp;quot;  &amp;quot;6S&amp;quot;  &amp;quot;7S&amp;quot;  &amp;quot;8S&amp;quot;  &amp;quot;9S&amp;quot;  &amp;quot;10S&amp;quot;
+## [23] &amp;quot;JS&amp;quot;  &amp;quot;QS&amp;quot;  &amp;quot;KS&amp;quot;  &amp;quot;AS&amp;quot;  &amp;quot;2C&amp;quot;  &amp;quot;3C&amp;quot;  &amp;quot;4C&amp;quot;  &amp;quot;5C&amp;quot;  &amp;quot;6C&amp;quot;  &amp;quot;7C&amp;quot;  &amp;quot;8C&amp;quot; 
+## [34] &amp;quot;9C&amp;quot;  &amp;quot;10C&amp;quot; &amp;quot;JC&amp;quot;  &amp;quot;QC&amp;quot;  &amp;quot;KC&amp;quot;  &amp;quot;AC&amp;quot;  &amp;quot;2D&amp;quot;  &amp;quot;3D&amp;quot;  &amp;quot;4D&amp;quot;  &amp;quot;5D&amp;quot;  &amp;quot;6D&amp;quot; 
+## [45] &amp;quot;7D&amp;quot;  &amp;quot;8D&amp;quot;  &amp;quot;9D&amp;quot;  &amp;quot;10D&amp;quot; &amp;quot;JD&amp;quot;  &amp;quot;QD&amp;quot;  &amp;quot;KD&amp;quot;  &amp;quot;AD&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Confirm that we have 35 elements
+print(length(playingCards))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] 52
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have our playing cards loaded into R, we can use sample like before to assign them along with a new function called split(). split() requires two arguments, a vector and the groups. We can always see what arguments split() takes with ?split. Note that the help page has more than two arguments, but we only need to provide two because the others have sensible defaults.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# One of the cool things about functions in R is 
+# that we can use them inside other functions. 
+#Our tools work on other tools. 
+#The groups argument is called f. You can see on the help page why. 
+
+# Here we are hardcoding that we have seven players. If you were to 
+# rewrite this code in the future, this is one place you might want to 
+# revise and write your own function
+hands = split(x = sample(playingCards, 35, replace = F), f = c(&amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,&amp;quot;5&amp;quot;,&amp;quot;6&amp;quot;,&amp;quot;7&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Our new object groups looks different than our other objects. That is because it is a &amp;ldquo;list&amp;rdquo; instead of a vector. A list is a collection of vectors that can have different types. We will learn about lists more as we move through the semester.&lt;/p&gt;
+
+&lt;p&gt;Here are the hands we dealt&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;print(hands)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## $`1`
+## [1] &amp;quot;QD&amp;quot; &amp;quot;4C&amp;quot; &amp;quot;3H&amp;quot; &amp;quot;6C&amp;quot; &amp;quot;QS&amp;quot;
 ## 
-## Call:
-## lm(formula = dist ~ speed, data = cars)
+## $`2`
+## [1] &amp;quot;3D&amp;quot; &amp;quot;QH&amp;quot; &amp;quot;4H&amp;quot; &amp;quot;2S&amp;quot; &amp;quot;8H&amp;quot;
 ## 
-## Coefficients:
-## (Intercept)        speed  
-##     -17.579        3.932&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;including-plots&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Including Plots&lt;/h1&gt;
-&lt;p&gt;You can also embed plots. See Figure &lt;a href=&#34;#fig:pie&#34;&gt;1&lt;/a&gt; for example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;par(mar = c(0, 1, 0, 1))
-pie(
-  c(280, 60, 20),
-  c(&amp;#39;Sky&amp;#39;, &amp;#39;Sunny side of pyramid&amp;#39;, &amp;#39;Shady side of pyramid&amp;#39;),
-  col = c(&amp;#39;#0292D8&amp;#39;, &amp;#39;#F7EA39&amp;#39;, &amp;#39;#C4B632&amp;#39;),
-  init.angle = -50, border = NA
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:pie&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png&#34; alt=&#34;A fancy pie chart.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: A fancy pie chart.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+## $`3`
+## [1] &amp;quot;7C&amp;quot; &amp;quot;KS&amp;quot; &amp;quot;KH&amp;quot; &amp;quot;2H&amp;quot; &amp;quot;4S&amp;quot;
+## 
+## $`4`
+## [1] &amp;quot;9D&amp;quot; &amp;quot;KC&amp;quot; &amp;quot;9S&amp;quot; &amp;quot;9H&amp;quot; &amp;quot;4D&amp;quot;
+## 
+## $`5`
+## [1] &amp;quot;7H&amp;quot; &amp;quot;JD&amp;quot; &amp;quot;8S&amp;quot; &amp;quot;9C&amp;quot; &amp;quot;3S&amp;quot;
+## 
+## $`6`
+## [1] &amp;quot;8C&amp;quot; &amp;quot;6H&amp;quot; &amp;quot;7D&amp;quot; &amp;quot;AS&amp;quot; &amp;quot;5C&amp;quot;
+## 
+## $`7`
+## [1] &amp;quot;AD&amp;quot;  &amp;quot;7S&amp;quot;  &amp;quot;AC&amp;quot;  &amp;quot;5H&amp;quot;  &amp;quot;10C&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is all of our code in one place.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Set a random number seed for reproducibility 
+set.seed(106108)
+
+# Create a vector of to represent card types and assign it the variable cards 
+cardTypes &amp;lt;- c(2:10, &amp;quot;J&amp;quot;,&amp;quot;Q&amp;quot;,&amp;quot;K&amp;quot;, &amp;quot;A&amp;quot;)
+
+# Attach suits to each card 
+hearts = paste(cardTypes, &amp;quot;H&amp;quot;, sep = &amp;quot;&amp;quot;)
+spades = paste(cardTypes, &amp;quot;S&amp;quot;, sep = &amp;quot;&amp;quot;)
+clubs = paste(cardTypes, &amp;quot;C&amp;quot;, sep = &amp;quot;&amp;quot;)
+diamonds = paste(cardTypes, &amp;quot;D&amp;quot;, sep = &amp;quot;&amp;quot;)
+
+# combine our playing cards into one vector along with the two jokers 
+playingCards = c(hearts, spades, clubs, diamonds)
+
+# Deal hands
+hands = split(x = sample(playingCards, 35, replace = F), f = c(1,2,3,4,5,6,7))
+print(hands)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## $`1`
+## [1] &amp;quot;KC&amp;quot; &amp;quot;JD&amp;quot; &amp;quot;4D&amp;quot; &amp;quot;9D&amp;quot; &amp;quot;9S&amp;quot;
+## 
+## $`2`
+## [1] &amp;quot;7S&amp;quot; &amp;quot;8D&amp;quot; &amp;quot;2D&amp;quot; &amp;quot;KD&amp;quot; &amp;quot;7D&amp;quot;
+## 
+## $`3`
+## [1] &amp;quot;6S&amp;quot; &amp;quot;5H&amp;quot; &amp;quot;6D&amp;quot; &amp;quot;JS&amp;quot; &amp;quot;6C&amp;quot;
+## 
+## $`4`
+## [1] &amp;quot;8S&amp;quot;  &amp;quot;8C&amp;quot;  &amp;quot;QH&amp;quot;  &amp;quot;10D&amp;quot; &amp;quot;5C&amp;quot; 
+## 
+## $`5`
+## [1] &amp;quot;3H&amp;quot; &amp;quot;3D&amp;quot; &amp;quot;KS&amp;quot; &amp;quot;4H&amp;quot; &amp;quot;2S&amp;quot;
+## 
+## $`6`
+## [1] &amp;quot;6H&amp;quot; &amp;quot;7C&amp;quot; &amp;quot;AD&amp;quot; &amp;quot;5S&amp;quot; &amp;quot;2H&amp;quot;
+## 
+## $`7`
+## [1] &amp;quot;4C&amp;quot; &amp;quot;7H&amp;quot; &amp;quot;JC&amp;quot; &amp;quot;KH&amp;quot; &amp;quot;9H&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Randomization Inference: A Simple Example</title>
+      <link>/post/randomization-inference-a-simple-example/</link>
+      <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/randomization-inference-a-simple-example/</guid>
+      <description>
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;This simulation is an example of randomization inference.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(8675309)
+library(dplyr)
+library(ggplot2)
+library(readr)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To understand how the public perceives Donald Trump&amp;rsquo;s tweets, YouGov &lt;a href=&#34;https://tweetindex.yougov.com&#34; target=&#34;_blank&#34;&gt;runs a poll&lt;/a&gt; that asks a representative sample of the US population to rate each tweet the day they are published. Trump&amp;rsquo;s writing style when tweeting is often hyperbolic, with certain words in all-caps and extending out others (&amp;ldquo;sooooo&amp;rdquo;) for effect.&lt;/p&gt;
+
+&lt;p&gt;To show how randomization inference works, let&amp;rsquo;s simulate some Trump tweets based on the YouGov scoring system. Further, let&amp;rsquo;s suppose for the sake of argument that Trump randomly inserts hyperbolic phrases into his tweets.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Generate some tweets 
+tweets &amp;lt;- data.frame(tweet = c(1:20),
+                     score_obs = round(rnorm(20, 0, 36)),
+                     exclamation = sample(0:1, 20, replace = T))%&amp;gt;%
+    mutate(Y_i1 = ifelse(exclamation == 1, score_obs, NA),
+           Y_i0 = ifelse(exclamation == 0, score_obs, NA))
+glimpse(tweets)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## Observations: 20
+## Variables: 5
+## $ tweet       &amp;lt;int&amp;gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1…
+## $ score_obs   &amp;lt;dbl&amp;gt; -36, 26, -22, 73, 38, 36, 1, 24, 21, 33, -56, 37, 5,…
+## $ exclamation &amp;lt;int&amp;gt; 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1…
+## $ Y_i1        &amp;lt;dbl&amp;gt; NA, NA, NA, 73, 38, NA, 1, 24, 21, NA, -56, NA, 5, -…
+## $ Y_i0        &amp;lt;dbl&amp;gt; -36, 26, -22, NA, NA, 36, NA, NA, NA, 33, NA, 37, NA…
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For this simulation, exclamation is a treatment assignment and we want to know the effect that it has on the score of the tweets.&lt;/p&gt;
+
+&lt;h2 id=&#34;sharp-null-hypothesis&#34;&gt;Sharp Null Hypothesis&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Fill in potential outcomes to make the Sharp Null
+tweets_ri = tweets %&amp;gt;%
+    mutate(Y_i1 = ifelse(is.na(Y_i1), Y_i0, Y_i1),
+           Y_i0 = ifelse(is.na(Y_i0), Y_i1, Y_i0))%&amp;gt;%
+    select(Y_i1, Y_i0, exclamation, score_obs)
+glimpse(tweets_ri)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## Observations: 20
+## Variables: 4
+## $ Y_i1        &amp;lt;dbl&amp;gt; -36, 26, -22, 73, 38, 36, 1, 24, 21, 33, -56, 37, 5,…
+## $ Y_i0        &amp;lt;dbl&amp;gt; -36, 26, -22, 73, 38, 36, 1, 24, 21, 33, -56, 37, 5,…
+## $ exclamation &amp;lt;int&amp;gt; 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1…
+## $ score_obs   &amp;lt;dbl&amp;gt; -36, 26, -22, 73, 38, 36, 1, 24, 21, 33, -56, 37, 5,…
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;First we take a difference in means in our observed values, our average treatment effect (ATE). We are going to compare this value to a distribution created by randomizing treatment assignment under the assumption that the true potential outcomes are identical and so there is no difference in treatment and control. This is the Sharp Null Hypothesis.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ATE = mean(tweets_ri$score_obs[tweets_ri$exclamation == 1]) - mean(tweets_ri$score_obs[tweets_ri$exclamation == 0])
+ATE
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] -8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;simulation&#34;&gt;Simulation&lt;/h2&gt;
+
+&lt;p&gt;To apply randomization inference, we first create all possible treatment vectors.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;poss_treatments = matrix(NA, 10000, 20)
+for(i in 1:nrow(poss_treatments)){
+    poss_treatments[i,] = sample(tweets_ri$exclamation, 20, replace = F)
+}
+
+# Keep only unique treamtent assignments 
+poss_treatments = unique(poss_treatments)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next we calculate the average treatment effect for each possible randomization&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;poss_ate = NA 
+for(i in 1:nrow(poss_treatments)){
+    mean_w_exclam = mean(tweets_ri$score_obs[poss_treatments[i,]== 1])
+    
+    mean_wo_exclam = mean(tweets_ri$score_obs[poss_treatments[i, ]== 0])
+    
+    poss_ate[i] = mean_w_exclam - mean_wo_exclam
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To evaluate whether our observed average treatment effect is significant, we can plot the distribution of our randomization. Code for that is given below.&lt;/p&gt;
+
+&lt;h2 id=&#34;results&#34;&gt;Results&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ggplot(as.data.frame(poss_ate), aes(x = poss_ate))+
+    geom_histogram(aes(y=..density..), binwidth = 1)+
+    geom_vline(xintercept = ATE, color = &amp;quot;red&amp;quot;, size = 1)+
+    theme_minimal()+
+        xlab(&amp;quot;Randomized Average Treatment Effects&amp;quot;)+
+        ylab(&amp;quot;Density&amp;quot;)+
+        ggtitle(&amp;quot;Randomization Inference of the Effect of Exclamations\nin Donald Trump&#39;s Tweets&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;/post/2019-06-02-randomization-inference-a-simple-example_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, we can also calculate a p-value.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# One tailed 
+sum(poss_ate&amp;gt;=ATE)/length(poss_ate)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] 0.6925842
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or a Two tailed p-value.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Two tailed
+sum(abs(poss_ate)&amp;gt;=ATE)/length(poss_ate)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;## [1] 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Given how we created our data, it is unsurprising that the p-value is not signficant. What is practically helpful is the procedure for simulation.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Using pdftools to Extract Vote Data</title>
+      <link>/post/using-pdftools-to-extract-vote-data/</link>
+      <pubDate>Sun, 02 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/using-pdftools-to-extract-vote-data/</guid>
+      <description>
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Suppose you are a concerned citizen who would like to know how voters in a state voted. Perhaps you are a voter in a state with &lt;a href=&#34;https://www.vice.com/en_us/article/vba4vx/corruption-is-rampant-and-new-jersey-is-cool-with-it&#34; target=&#34;_blank&#34;&gt;rampant corruption&lt;/a&gt; or perhaps you are a voter in a state that does not have &lt;a href=&#34;https://www.app.com/story/news/politics/elections/2018/10/22/new-jersey-voting-machines-security/1656558002/&#34; target=&#34;_blank&#34;&gt;paper backups for voting machines&lt;/a&gt;. Perhaps you are just masochistic enough to be interested in pulling tables out of reasonably well formed pdfs. The following is a code example for the last one.&lt;/p&gt;
+
+&lt;p&gt;Fortunately (or unfortunately) for us, the state of New Jersey still provides their official election results in pdf files instead of a common data format like csv or even an Excel file. Copying each item by hand risks user error through fat fingers, sheer tedium, or great displeasure at a state in the 21st Century still outputting results to pdf. Therefore, it is much preferable to search for a code solution.&lt;/p&gt;
+
+&lt;p&gt;Each county in New Jersey reports Senate results separately. Here&amp;rsquo;s Atlantic County&amp;rsquo;s &lt;a href=&#34;https://preview.tinyurl.com/y3zumyjk&#34; target=&#34;_blank&#34;&gt;precinct results&lt;/a&gt; for the 2018 Senate Race. The table that we are going to extract looks like &lt;a href=&#34;https://imgur.com/KEFhzjv&#34; target=&#34;_blank&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s one way to pull out the data, using some knowledge about who ran. I make use of tidyverse functions and pdftools. Each step of the function is commented.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
+library(pdftools)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once those are loaded, we can write our function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Remove columns that are all NAs
+not_all_na &amp;lt;- function(x){
+    !all(is.na(x))
+}
+
+senate_clean_table &amp;lt;- function(tbl){
+    # Remove commas and split on new lines 
+    tables &amp;lt;- NULL
+    tbl &amp;lt;- str_replace_all(tbl,pattern = &amp;quot;,&amp;quot;, &amp;quot;&amp;quot;)%&amp;gt;%
+        # We can see the table ends with the string NJDOE
+        str_replace_all(&amp;quot;Total[:print:]+&amp;quot;, &amp;quot;NJDOE&amp;quot;)%&amp;gt;%
+        # Split on new lines 
+        str_split(pattern = &amp;quot;\n&amp;quot;, simplify = TRUE)
+        
+    # Some pdfs may be more than one page, so loop over all pages
+    # Atlantic County will only run this loop once
+    for(i in 1:dim(tbl)[1]){
+    
+        # Find the county name and save name to object 
+        county_cell &amp;lt;- stringr::str_which(tbl[i,], &amp;quot;County&amp;quot;)
+        county_name &amp;lt;- tbl[i,county_cell]%&amp;gt;%
+        stringr::str_squish()
+
+        # Find the senate candidates cell 
+        # Pull out candidates, turn them into a vector 
+        # Keep only the last names 
+        candidates_cell &amp;lt;- stringr::str_which(tbl[i,], &amp;quot;Robert&amp;quot;)
+        candidates &amp;lt;- tbl[i, candidates_cell] %&amp;gt;% 
+            trimws()%&amp;gt;%
+            str_squish()%&amp;gt;%
+            str_replace_all(pattern = &amp;quot; R. &amp;quot;, &amp;quot; &amp;quot;)%&amp;gt;%
+            str_replace_all(pattern = &amp;quot; Lynn &amp;quot;, &amp;quot; &amp;quot;)%&amp;gt;%
+            str_split(pattern = &amp;quot;\\s&amp;quot;)
+        candidates &amp;lt;- unlist(candidates)
+        
+        # Because each candidate only has two names, after we remove the 
+        # initials R recycles and keeps every other cell, which is last names 
+        candidates &amp;lt;- candidates[c(FALSE, TRUE)]
+        
+        # Find the party cell. The actual table starts after this one
+        party_cell &amp;lt;- stringr::str_which(tbl[i,], &amp;quot;Democratic&amp;quot;)
+       
+        # Start the data frame 
+        table_start &amp;lt;- party_cell + 1
+        
+        # Find the line with totals. The last line of interest is 
+        # directly before it 
+        table_end &amp;lt;- stringr::str_which(tbl[i,], &amp;quot;NJDOE&amp;quot;)[1] -1
+    
+        # Subset to the table of interest 
+        table &amp;lt;- tbl[i, table_start:table_end]
+        
+        # Create a delimiter everywhere there are 2 spaces 
+        table &amp;lt;- str_replace_all(table, &amp;quot;\\s{2,}&amp;quot;, &amp;quot;|&amp;quot;)
+        
+        # Now we can pull out the data
+        
+        # Make a text connection and read that in as a dataframe
+        text_con &amp;lt;- textConnection(table)
+        
+        df &amp;lt;- read.csv(text_con, sep = &amp;quot;|&amp;quot;, header = F, stringsAsFactors = F)%&amp;gt;%
+            dplyr::select_if(not_all_na)
+        # Put in the appropriate column names and then add US senate as office 
+        colnames(df)&amp;lt;- c(&amp;quot;precinct&amp;quot;, candidates)
+        df &amp;lt;- df %&amp;gt;% 
+            mutate(office = &amp;quot;US Senate&amp;quot;)%&amp;gt;%
+            mutate(county = county_name)%&amp;gt;%
+            select(county, precinct, office, everything())
+        tables[[i]] &amp;lt;- df
+    }
+    if(length(tables)==1){
+        out &amp;lt;- tables[[1]]
+    }else{
+       out &amp;lt;- dplyr::bind_rows(tables) 
+    }
+    out
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Supposing that we have stored all the 2018 Senate pdf urls in a vector called senate_urls, we can then make use of purrr::map and purrr::map_dfr() functions to run each through pdf_text and then our function, followed by tidyr::gather() to get our data into a long format.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# pdf_text() and map to the rescue
+
+urls &amp;lt;- c(&amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-atlantic.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-bergen.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-burlington.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-camden.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-capemay.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-cumberland.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-essex.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-gloucester.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-hudson.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-hunterdon.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-mercer.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-middlesex.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-monmouth.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-morris.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-ocean.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-passaic.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-salem.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-somerset.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-sussex.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-union.pdf&amp;quot;,
+                 &amp;quot;https://www.state.nj.us/state/elections/assets/pdf/election-results/2018/2018-general-election-results-us-senate-warren.pdf&amp;quot;)
+
+senate_urls &amp;lt;- map(urls, pdf_text)
+
+nj_senate &amp;lt;- senate_urls %&amp;gt;% 
+    map_dfr(senate_clean_table)%&amp;gt;%
+    gather(candidate, votes, -county, -precinct, -office)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can now take at our now useful voting data.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;head(nj_senate)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;##            county         precinct    office candidate votes
+## 1 Atlantic County     Absecon City US Senate  Menendez  1551
+## 2 Atlantic County    Atlantic City US Senate  Menendez  6039
+## 3 Atlantic County  Brigantine City US Senate  Menendez  1391
+## 4 Atlantic County       Buena Boro US Senate  Menendez   583
+## 5 Atlantic County Buena Vista Twp. US Senate  Menendez  1095
+## 6 Atlantic County      Corbin City US Senate  Menendez    77
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
