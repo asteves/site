@@ -21,17 +21,39 @@
 [[main]]
   name = "Courses"
   identifier = "courses"
-  url = "courses/"
+  url = "#courses"
   weight = 40
 
 [[main]]
   parent = "courses"
-  url = "courses/PS5"
+  url = "courses/ps5"
   name = "PS5"
+
+[[main]]
+  parent = "courses"
+  url = "courses/"
+  name = "Index"
+
+[[main]]
+  parent = "courses"
+  url = "courses/econometrics"
+  name = "Econometrics"
+
+[[main]]
+  parent = "courses"
+  url = "courses/calculus"
+
+
 
 # Link to a PDF of your resume/CV from the menu.
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
-#[[main]]
-#  name = "CV"
-#  url = "files/cv.pdf"
-#  weight = 50
+[[main]]
+  name = "CV"
+  url = "files/cv.pdf"
+  weight = 50
+
+# Software
+[[main]]
+  name = "Code"
+  url = "https://github.com/asteves"
+  weight = 60

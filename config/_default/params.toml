@@ -3,9 +3,9 @@
 
 # Color theme.
 #   Choose from `default`, `ocean`, `forest`, `dark`, `apogee`, `1950s`, `coffee`, `cupcake`, `strawberry`.
-color_theme = "dark"
+color_theme = "default"
 # Enable users to switch between day and night mode?
-day_night = true
+day_night = false
 
 # Font style.
 #   Choose from `default`, `classic`, or `playfair`.
@@ -62,7 +62,7 @@ plugins_js  = []
 
 # Get user avatars from Gravatar.com? (true/false)
 gravatar = false
-
+avatar = "portrait.jpg"
 # Align the main menu to the right of the page? (true/false)
 menu_align_right = false
 
