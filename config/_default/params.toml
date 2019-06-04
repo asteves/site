@@ -15,7 +15,7 @@ font = "default"
 description = ""
 
 # Default image for social sharing and search engines. Place image in `static/img/` folder and specify image name here.
-sharing_image = ""
+sharing_image = "portrait.jpg"
 
 # Twitter username (without @). Used when a vistor shares your site on Twitter.
 twitter = ""
@@ -62,7 +62,9 @@ plugins_js  = []
 
 # Get user avatars from Gravatar.com? (true/false)
 gravatar = false
-avatar = "portrait.jpg"
+
+avatar = "portrait.jpeg" 
+
 # Align the main menu to the right of the page? (true/false)
 menu_align_right = false
 
