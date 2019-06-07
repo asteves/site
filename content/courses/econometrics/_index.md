@@ -5,7 +5,7 @@ summary: Notes and problem solutions for Woolridge's Introductory Econometrics
 weight: 1
 
 # Page metadata.
-title: Overview
+title: Econometrics
 date: "2018-09-09T00:00:00Z"
 lastmod: "2018-09-09T00:00:00Z"
 draft: false  # Is this a draft? true/false
@@ -17,7 +17,7 @@ type: docs  # Do not modify.
 # - weight: Position of link in menu.
 menu:
   econometrics:
-    name: Overview
+    name: Econometrics
     weight: 1
 ---
 
