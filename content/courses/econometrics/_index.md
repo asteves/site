@@ -23,6 +23,12 @@ menu:
 
 ## Information 
 
+This page holds notes on Woolridge's *Introductory Econometrics* 5th Edition along with links to my answers to the practice problems. 
+
 ## Links 
 
-## Data 
+### Data 
+
+[Book Datasets can be downloaded from the publisher's website](https://www.cengage.com/cgi-wadsworth/course_products_wp.pl?fid=M20b&product_isbn_issn=9781111531041)
+
+### Homework Solutions 
