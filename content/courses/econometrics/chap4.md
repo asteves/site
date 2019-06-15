@@ -58,3 +58,5 @@ Theorem 2 is important because it allows us to test hypotheses involving \\(\bet
 \\[t\_{stat} = t_{\hat{\beta_j}} = \frac{\hat{\beta_j}}{se(\hat{\beta_j})} \\]
 
 ## Null Hypothesis Tests
+
+

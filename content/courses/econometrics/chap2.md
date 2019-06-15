@@ -223,7 +223,7 @@ Now that we know the way to estimate the variance, we can ask the following ques
 2. The larger the \\(V(x)\\), the smaller \\(V(\hat{\beta_1})\\)
 3. As sample size increases, the total variation in x increases which leads to a decrease in \\(V(\hat{\beta_1})\\)
 
-## Estimating the Erroro Variance 
+## Estimating the Error Variance 
 
 Errors are never observed. Instead, we observe residuals that we can compute from our sample data. We can write the errors as a function of the residuals. 
 
