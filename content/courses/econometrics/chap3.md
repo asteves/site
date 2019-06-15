@@ -142,7 +142,7 @@ The unbiased estimator of \\(\sigma^2\\) is \\(\hat{\sigma^2}= \frac{1}{n-k-1}\s
 
 The standard error of \\(\hat{\beta_j}\\) is
 
-\\[se(\hat{\beta_j}= \frac{\hat{\sigma}}{\sqrt{{SST}_j(1-\hat{R_j}^2)}}\\]
+\\[se(\hat{\beta_j})= \frac{\hat{\sigma}}{\sqrt{{SST}_j(1-\hat{R_j}^2)}}\\]
 
 ## Efficiency Properties of OLS 
 
