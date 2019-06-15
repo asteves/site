@@ -138,7 +138,7 @@ and
 
 \\[E[\hat{\sigma%^2}= \sigma^2]\\]
 
-The unbiased estimator of \\(\sigma^2) is \\(\hat{\sigma^2}= \frac{1}{n-k-1}\sum_{i=1}^n \hat{u_i}^2 \\) where n is the number of observations and k + 1 is the number of parameters. 
+The unbiased estimator of \\(\sigma^2\\) is \\(\hat{\sigma^2}= \frac{1}{n-k-1}\sum_{i=1}^n \hat{u_i}^2 \\) where n is the number of observations and k + 1 is the number of parameters. 
 
 The standard error of \\(\hat{\beta_j}\\) is
 
