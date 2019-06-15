@@ -147,6 +147,7 @@ The standard error of \\(\hat{\beta_j}\\) is
 ## Efficiency Properties of OLS 
 
 The OLS estimator \\(\hat{\beta_j}\\) for \\(\beta_j\\) is BLUE: The Best Linear Unbiased Estimator. 
+
  - estimator: rule that can be applied to data to generate an estimate 
  - unbiased \\(E[\hat{\beta_j}]=\beta_j \\) for any estimator
  - linear: An estimator is linear if it can be expressed as a linear function of the data on the dependent variable 
