@@ -132,7 +132,7 @@ The error u has the same variance given any values of the explanatory variables.
 *Theorem 2* 
 Under assumptions 1-5 conditional on the sample values of the independent variables 
 
-\\[v(\hat{\beta_j} = \frac{\sigma^2}{{SST}_j(1-R_j^2)}) \\]
+\\[v(\hat{\beta_j}) = \frac{\sigma^2}{{SST}_j(1-R_j^2)} \\]
 
 and 
 
