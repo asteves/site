@@ -24,6 +24,6 @@ user_groups:
 - Visitors
 ---
 
-I am a PhD Student in the [Travers Department of Political Science at UC Berkeley](https://www.polsci.berkeley.edu). My primary research interests are military organizations, the determinants of political violence, non-state actors, and causal inference. I am also interested in creating tools to make software easier to use for non-technical political scientists. 
+I am a PhD Student in the [Travers Department of Political Science at UC Berkeley](https://www.polisci.berkeley.edu). My primary research interests are military organizations, the determinants of political violence, non-state actors, and causal inference. I am also interested in creating tools to make software easier to use for non-technical political scientists. 
 
 
