@@ -253,7 +253,8 @@ ols <- function(y,
   ### Variable definitions 
   # y: <string> data frame column for our dependent variable 
   # x: <string> data frame columns for our independent variable.
-  ## Passed to function as a vection 
+  ## Passed to function as a vector
+  ## e.g. c("x", "z")
   # data: <data frame> A data frame of our data 
   # se_type: <string> our standard error type. 
   ## We can choose from c("classical", "HC0",
