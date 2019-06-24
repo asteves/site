@@ -3,7 +3,7 @@ title: 'OLS Estimation by "Hand" in R '
 author: alex
 date: '2019-06-20'
 slug: ols-estimation-by-hand-in-r
-categories: []
+categories: [R]
 tags: [R]
 subtitle: ''
 summary: 'A common programming assignment when learning regression is to calculate OLS estimators by hand. In this post, I show exactly how to program OLS estimation in R. In addition, I explain how to add different standard error calculations to replicate Huber-White standard errors and Stata robust standard errors. '
