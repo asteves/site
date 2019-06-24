@@ -7,7 +7,7 @@ categories:
   - R
 tags: []
 subtitle: ''
-summary: ''
+summary: 'Randomization Inference is a non-parametric method for calculating p-values for hypothesis tests. This post provides a simple example to show how to do RI in R.'
 authors: []
 lastmod: '2019-06-02T16:53:59-07:00'
 featured: no
