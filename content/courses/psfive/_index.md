@@ -23,10 +23,9 @@ menu:
 
 ## Information 
 
-## Notes 
+In the Fall of 2019, I was the head GSI for PS5: Introduction to International Relations, taught by Professor Aila Matanock. This page serves as a repository for the notes and section questions I used for the course. 
 
 Notes on *World Politics 4th Edition* by Frieden, Lake, and Schultz can be found [here](https://github.com/asteves/site/raw/master/content/files/IRNotes.pdf)
 
-## Section Questions 
 
 Questions for sections can be found [here](https://github.com/asteves/site/raw/master/content/files/ps5SectionQuestions.pdf) 
