@@ -9,7 +9,7 @@ title: Overview
 date: "2018-09-09T00:00:00Z"
 lastmod: "2018-09-09T00:00:00Z"
 draft: false  # Is this a draft? true/false
-toc: true  # Show table of contents? true/false
+toc: false  # Show table of contents? true/false
 type: docs  # Do not modify.
 
 # Add menu entry to sidebar.
@@ -23,6 +23,10 @@ menu:
 
 ## Information 
 
-## Links 
+## Notes 
 
-## Data 
+Notes on *World Politics 4th Edition* by Frieden, Lake, and Schultz can be found [here](https://github.com/asteves/site/raw/master/content/files/IRNotes.pdf)
+
+## Section Questions 
+
+Questions for sections can be found [here](https://github.com/asteves/site/raw/master/content/files/ps5SectionQuestions.pdf) 
