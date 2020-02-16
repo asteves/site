@@ -12,3 +12,5 @@ title = "Biography"
 # See https://sourcethemes.com/academic/docs/get-started/#introduce-yourself
 author = "admin"
 +++
+
+My Google Scholar page is [here](https://scholar.google.com/citations?user=6BuqXdwAAAAJ&hl=en)
