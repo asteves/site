@@ -1,7 +1,7 @@
 ---
 # Course title, summary, and position.
 linktitle: Econometrics
-summary: Notes and problem solutions for Woolridge's Introductory Econometrics
+summary: Notes and problem solutions for Wooldridge's Introductory Econometrics
 weight: 1
 
 # Page metadata.
@@ -23,7 +23,7 @@ menu:
 
 ## Information 
 
-This page holds notes on Woolridge's *Introductory Econometrics* 5th Edition along with links to my answers to the practice problems. 
+This page holds notes on Wooldridge's *Introductory Econometrics* 5th Edition along with links to my answers to the practice problems. 
 
 ## Links 
 
