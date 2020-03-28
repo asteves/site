@@ -20,7 +20,7 @@ projects: []
 ---
 ## 1. Introduction 
 
-Recently, a friend asked me how to fit a two-way fixed effects model in R. A fixed effects model is a regression model in which the intercept of the model is allowed to move across individuals and groups. We most often see it in panel data contexts. Two-way fixed effects have seen massive interest from the methodological community. Some recent papers of interest are [Imai and Kim 2019](https://imai.fas.harvard.edu/research/FEmatch.html), [Goodman-Bacon 2019](https://cdn.vanderbilt.edu/vu-my/wp-content/uploads/sites/2318/2019/07/29170757/ddtiming_7_29_2019.pdf), [Abraham and Sun 2018](https://arxiv.org/abs/1804.05785). 
+Recently, a friend asked me how to fit a two-way fixed effects model in R. A fixed effects model is a regression model in which the intercept of the model is allowed to move across individuals and groups. We most often see it in panel data contexts. Two-way fixed effects have seen massive interest from the methodological community. Some recent papers of interest are [Imai and Kim 2019](https://imai.fas.harvard.edu/research/FEmatch.html), [Goodman-Bacon 2019](https://cdn.vanderbilt.edu/vu-my/wp-content/uploads/sites/2318/2019/07/29170757/ddtiming_7_29_2019.pdf), and [Abraham and Sun 2018](https://arxiv.org/abs/1804.05785). 
 
 In this post, I show two ways to fit two-way fixed effects models. The first is the least squares with dummy variables approach, and the second is a fixed effects approach. 
 
