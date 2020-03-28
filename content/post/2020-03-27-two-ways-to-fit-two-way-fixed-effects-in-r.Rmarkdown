@@ -1,0 +1,77 @@
+---
+title: Two Ways to fit Two-Way Fixed Effects in R
+author: alex
+date: '2020-03-27'
+slug: two-ways-to-fit-two-way-fixed-effects-in-r
+categories:
+  - R
+tags:
+  - R
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-03-27T17:32:08-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+## 1. Introduction 
+
+Recently, a friend asked me how to fit a two-way fixed effects model in R. A fixed effects model is a regression model in which the intercept of the model is allowed to move across individuals and groups. We most often see it in panel data contexts. Two-way fixed effects have seen massive interest from the methodological community. Some recent papers of interest are [Imai and Kim 2019](https://imai.fas.harvard.edu/research/FEmatch.html), [Goodman-Bacon 2019](https://cdn.vanderbilt.edu/vu-my/wp-content/uploads/sites/2318/2019/07/29170757/ddtiming_7_29_2019.pdf), [Abraham and Sun 2018](https://arxiv.org/abs/1804.05785). 
+
+In this post, I show two ways to fit two-way fixed effects models. The first is the least squares with dummy variables approach, and the second is a fixed effects approach. 
+
+## 2. Packages 
+
+To show that both methods work, use a reproducible example from a dataset located in the package `bacondecomp`. 
+
+```{r, message = F, warning = F}
+# for a dataset
+library(bacondecomp) 
+# for robust standard error estimation
+library(lmtest) 
+# To calculate correct vcov matrix with 2WFE
+library(multiwayvcov) 
+# For a package way to do FE
+library(plm)
+```
+
+## 3. Estimation 
+
+### Least Squares Dummy Variables 
+
+Here is the way to fit with `lm()`. Because we only have one independent variable of interest, I subset `coeftest()` to just that variable. The rest of the variables will be all the factor dummies. 
+
+```{r, warning = F, message=F}
+df <- bacondecomp::castle
+# The way with lm. 
+fit_tw <- lm(l_homicide ~ post + factor(state) + factor(year), 
+             data = df)
+
+# The coefficient of interest is the second in this object. 
+vcov_tw <- multiwayvcov::cluster.vcov(fit_tw, 
+                                      cbind(df$state, df$year),
+                                      use_white = F, 
+                                      df_correction = F)
+# Just get coefficient of interest
+# Here it's the second row from coeftest
+coeftest(fit_tw, vcov_tw)[2,] 
+```
+
+Alternatively, we can do it with `plm()`. Under this method, we are calculating a fixed effects estimator. We will get the same result, but this way is more computationally efficient, especially as our models become more complex.  
+
+```{r}
+fit_plm <- plm(l_homicide ~ post, 
+               data = df, 
+               index = c("state", "year"), 
+               model = "within", 
+               effect = "twoways")
+
+# Note how this is functionally identical to the lm() way 
+coeftest(fit_plm, vcov = vcovHC, type = "HC1")
+```
+
+Note that both methods return functionally identical answers. For other ways, check out [LOST Stats](https://lost-stats.github.io/Model_Estimation/fixed_effects_in_linear_regression.html)
