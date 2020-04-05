@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>The Standard Errors of Persistence</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alex Stephenson" />
+    <meta name="date" content="2020-04-05" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# The Standard Errors of Persistence
+## A Discussion of Kelly 2019
+### Alex Stephenson
+### UC Berkeley
+### 2020-04-05
+
+---
+
+
+
+
+# Take Home Point
+
+Failure to understand and account for spatial autocorrelation creates bias in regressions that could call into question major findings in economics and political science. 
+
+Only 25% of the studies in Kelly's sample have findings that are robust after taking into account possibility regressions are fitting spatial noise. 
+
+---
+
+# Goals of Kelly (2019)
+
+1. Show the connection between high *t*-statistics and severe spatial autocorrelation of residuals
+
+--
+
+2. Apply that finding to the persistence literature 
+
+---
+
+# The setting for these findings
+
+There is Large literature on persistence that suggest modern outcomes (incomes, social attitudes) are shaped by past characteristics 
+- Examples:
+    - Medieval pograms and votes for Nazi parties Voigtlander and Voth 
+    - Slave trade and mistrust in African Societies (Nunn and Wantchekon 2011)
+    - Slavery in the American South and contemporary differences in political attitudes (Acharya, Blackwell, Sen 2016)
+
+The persistence variables have high explanatory power (e.g. big *t*-statistics)
+
+---
+
+# The Problem with Space
+
+Tobler's First Law of Geography: "Everything is related to everything else, but near things are more related than distant things."
+
+--
+- Persistence regressions are spatial regressions. Like time series, spatial regressions can have correlated values.
+
+--
+- Spatial Autocorrelation describes the degree to which observations in spatial locations are similar to each other
+
+---
+
+# Kelly's Test 
+
+Kelly proposes a two step procedure for identification of persistence issues: 
+
+1. Compute a Moran Index. Large Moran Index are "reliable warnings that nominal significance levels differ substantially from true ones".
+2. Generate synthetic spatial noise to match correlation structure of variables of interest. Use these as placebo tests.
+
+---
+
+# What the paper is not doing
+
+Checking for issues with data construction 
+- e.g. Acemoglu, Robinson, Johnson 2001 (Albouy 2012), La Porta et al 1997 (Spamann 2010)
+
+--
+
+Check plausibility of mechanism or quality of scholarship 
+
+--
+
+Checking for econometric issues
+
+--
+
+Interested in disproving findings of original studies
+    
+---
+
+# Moran's Statistic
+
+Moran's Statistic or Moran's *I* is a measure of spatial autocorrelation
+
+`$$I = \frac{N}{\sum_{i=1}^n \sum_{i=1}^nw_{ij}}\frac{\sum_{i=1}^n\sum_{j=1}^nw_{ij}(x_i -\bar{x})(x_j - \bar{x})}{\sum_{i=1}^n(x_i - \bar{x})^2}$$`
+
+- N is the number of spatial weights indexed by *i* and *j* 
+- `\(x\)` is the variable of interest. `\(\bar{x}\)` is the mean of `\(x\)`. 
+- `\(w_{ij}\)` is the spatial weights matrix with zeros on the diagonals
+
+Think of this as the weighted sum of covariance between every pair of residuals with a weight scheme that follows Tobler's First Law of Geography
+---
+
+# R Implementation 
+
+[Full Code for R Simulation Setup](https://tinyurl.com/t3xh5zm)
+
+
+
+---
+
+# Picture of Two Independent Random Spatial Processes
+
+&lt;img src="kelly_files/figure-html/unnamed-chunk-2-1.png" width="504" /&gt;
+
+---
+
+# Correlation in the Noise
+
+Even though by construction there is no relationship, a linear regression reports a negative and statistically significant coefficient
+
+
+&lt;table cellspacing="0" align="center" style="border: none;"&gt;
+&lt;caption align="bottom" style="margin-top:0.3em;"&gt;Statistical models&lt;/caption&gt;
+&lt;tr&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;&lt;/b&gt;&lt;/th&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;Model 1&lt;/b&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Intercept&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;0.69&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;(0.06)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Hopscotch Enthusiasts in 1900&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;-0.43&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;(0.11)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-top: 1px solid black;"&gt;R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="border-top: 1px solid black;"&gt;0.20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Adj. R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;0.19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;50&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;RMSE&lt;/td&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;0.14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;" colspan="3"&gt;&lt;span style="font-size:0.8em"&gt;&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;p &amp;lt; 0.001, &lt;sup style="vertical-align: 0px;"&gt;**&lt;/sup&gt;p &amp;lt; 0.01, &lt;sup style="vertical-align: 0px;"&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+---
+
+# Visual Inspection of Correlation
+
+The problem is that there is correlation in the residuals due to spatial autocorrelation.
+
+&lt;img src="kelly_files/figure-html/unnamed-chunk-4-1.png" width="504" height="450" /&gt;
+
+---
+
+# Moran's Index for our simulated data
+
+A Moran Monte Carlo test reveals that our observed Moran statistic is highly unlikely to occur if there was no spatial noise. 
+
+&lt;img src="kelly_files/figure-html/unnamed-chunk-5-1.png" width="504" height="450" /&gt;
+
+---
+
+# The real world is spatially correlated 
+
+![:scale 80%](inflation.png)
+
+---
+
+# The real world is spatially correlated 
+
+![:scale 80%](significance1.png)
+
+---
+
+# Kelly's Results 
+
+Replicates the leading regression in the paper exactly
+
+--
+
+- Applies two step procedure
+
+--
+
+- Implication: "Only about 1/4 of the persistence results we examine are robust after we take account of possibility that regressions might be fitting spatial noise"
+
+---
+
+# Moran Index for Papers 
+
+![](moran.png)
+
+---
+
+# The explanatory power of noise 
+
+![](noisesig.png)
+
+---
+
+# Actual predictors explain noise 
+
+![](depend.png)
+
+---
+
+# Concluding remarks
+
+From this sample of papers the papers that have low Moran statistics often use very weak instruments
+
+--
+
+Sample appears to trade off weak data with spatial correlation
+
+--
+
+Few if any actually estimate spatial regressions, even as a robustness check
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
