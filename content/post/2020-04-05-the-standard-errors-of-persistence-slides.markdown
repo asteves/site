@@ -26,4 +26,4 @@ The slides are below and the link to all the R code used to create the figures a
 
 ## Slides {.tabset}
 
-<iframe src="alexstephenson.me/slides/kelly.html#1" width="672" height="400px"></iframe>
+<iframe src="slides/kelly.html#1" width="672" height="400px"></iframe>

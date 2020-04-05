@@ -27,5 +27,5 @@ The slides are below and the link to all the R code used to create the figures a
 ## Slides {.tabset}
 
 ```{r, echo = F}
-knitr::include_url('alexstephenson.me/slides/kelly.html#1')
+knitr::include_url('slides/kelly.html#1')
 ```
