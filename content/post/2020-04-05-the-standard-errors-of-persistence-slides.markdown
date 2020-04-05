@@ -24,6 +24,6 @@ The jist of Kelly's work is that the persistence literature features unusually h
 
 The slides are below and the link to all the R code used to create the figures and simulation is [here](https://gist.github.com/asteves/a0da514367e6183aa19983a5db178509). 
 
-## Slides {.tabset}
+## Slides 
 
-<iframe src="slides/kelly.html#1" width="672" height="400px"></iframe>
+<iframe src="https://alexstephenson.me/slides/kelly.html#1" width="672" height="400px"></iframe>
