@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R Summer Workshop</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alex Stephenson" />
+    <link href="dataWrangling101_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="dataWrangling101_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="dataWrangling101_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R Summer Workshop
+## <br/>Data Wrangling and Manipulation
+### Alex Stephenson
+### UC Berkeley
+### 6/29/2020
+
+---
+
+    
+    
+
+# Owls and Apologies 
+
+.center[
+&lt;img src="img/owl.jpg" width="500px" height="400px" /&gt;
+]
+
+---
+
+# Learning Objectives 
+
+By the end of this workshop we will hopefully have learned:
+    
+--
+    
+1. General Principles of Data Wrangling 
+
+--
+    
+2. Basic, but powerful, tools for reshaping data  
+
+--
+
+3. How to apply these principles on actual research projects (plus heteroskedastic error corrections!)
+
+---
+    
+# What packages do I need to follow along 
+    
+This talk is completely in **R**. 
+
+We will spend our time using functions from the following packages: 
+
+`tidyverse`: The absolute workhorse king for data wrangling in R 
+
+`haven`: The best way to read in Stata files to R 
+
+`estimatr`: The easiest way to get HC* error corrections 
+
+`lmtest`: For when estimatr fails us. 
+
+---
+
+# Data Wrangling 
+
+Working with data means answering three questions 
+
+--
+
+What do we want to do?
+
+--
+
+How do we instruct a computer to do that thing?
+
+--
+
+How do we execute that thing in a reasonable amount of time?
+
+---
+
+# Tidy Data
+
+A way to help us get started is to constrain our data to be tidy
+
+Tidy data means: 
+
+  - Each Variable is saved in its own column 
+  - Each Observation is saved in its own row 
+  - Each Cell is a single value 
+
+Tidy data makes the analysis of data **much** easier for you and for your future self
+
+---
+
+# The Verbs of Data Wrangling 
+
+Data Wrangling has a few major "verbs". The most common ones in every day data analysis are: 
+
+`arrange()`: Order observations according to a condition. 
+
+`filter()`: Pick observations and variables of interest.
+
+`group_by()`: Organize observations into groups of observations
+
+`mutate()`: Make a new variable or change an existing variable according to a condition
+
+`select()`: Include or exclude a variable of interest. 
+
+`summarise()`: Get a summary of a variable 
+
+`pivot`: Change the shape of of a dataset. 
+---
+
+# Reshaping Untidy Data Example 1
+
+Suppose we have the following data, based on the standard format of the World Bank WDI 
+
+
+```
+##   country y2010 y2011 y2012
+## 1     USA   100    85    NA
+## 2  Mexico    90    95    99
+```
+
+This data frame is an example of *wide* data. There are more columns than rows. 
+
+For almost everything we do in R, we prefer *long* data. 
+---
+
+# Reshaping our Untidy data set 
+
+The tidyverse package to reshape data is called tidyr. 
+
+The key functions are `pivot_longer()` and `pivot_wider()`. `pivot_longer()` converts wide data to long. `pivot_wider()` does the reverse. 
+
+--
+
+```r
+ex1_l &lt;- ex1_w %&gt;% 
+  pivot_longer(-country, names_to = "year", values_to = "count")%&gt;%
+  mutate(year = str_replace_all(year, "y", "")%&gt;%
+           trimws()%&gt;%
+           as.integer()) #&lt;&lt;
+
+ex1_l
+```
+
+```
+## # A tibble: 6 x 3
+##   country  year count
+##   &lt;chr&gt;   &lt;int&gt; &lt;dbl&gt;
+## 1 USA      2010   100
+## 2 USA      2011    85
+## 3 USA      2012    NA
+## 4 Mexico   2010    90
+## 5 Mexico   2011    95
+## 6 Mexico   2012    99
+```
+
+---
+
+# Reshaping Data Example 2 
+
+Sometimes our data was made by evil people who put multiple pieces of information in a column name. 
+
+
+```
+##   country year employ_r_1519 unemploy_r_1519 retire_r_1519
+## 1     USA 2010            50              45            70
+## 2  Mexico 2010            60              50            80
+```
+
+Here, the authors of this dataset include the type of employment and age in the same variable name. 
+
+---
+
+# Fix Untidy Data 2 
+
+Our basic structure remains the same. Here we use two tricks to grab columns faster. 
+
+We can specify the columns we want to pivot with `cols`. 
+
+We can use `names_sep` to split up a column name. 
+
+
+```r
+ex2_l &lt;- ex2_w %&gt;% 
+  pivot_longer(cols = employ_r_1519:retire_r_1519, #&lt;&lt;
+               names_to = c("status","type", "age"),
+               names_sep = "_",
+               values_to = "value")
+```
+
+
+```
+## # A tibble: 6 x 6
+##   country  year status   type  age   value
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+## 1 USA      2010 employ   r     1519     50
+## 2 USA      2010 unemploy r     1519     45
+## 3 USA      2010 retire   r     1519     70
+## 4 Mexico   2010 employ   r     1519     60
+## 5 Mexico   2010 unemploy r     1519     50
+## 6 Mexico   2010 retire   r     1519     80
+```
+---
+
+# Wrangling Incorrect Data
+
+Data Entry is fraught with challenges. As an example consider Fearon and Laitin 2003. 
+
+.center[
+&lt;img src="img/Fearon.png" width="500px" height="400px" /&gt;
+]
+
+Focus on Model 1 of this table. 
+
+---
+
+# A Failed Replication
+
+```r
+# Replication file for Fearon and Laitin 2003 
+fearon &lt;- read_dta(here("Workshop1/data/fearon.dta"))
+
+# Main model specification 
+
+
+tryCatch({f1 &lt;- glm(onset ~ warl + gdpenl + lpopl1 + lmtnest + 
+                      ncontig + Oil + nwstate + instab + polity2l +
+                      ethfrac + relfrac, 
+                    data = fearon, 
+                    family = "binomial")}, 
+         error = function(e){ 
+           print("Replication fail due to y greater than 1")
+           })
+```
+
+```
+## [1] "Replication fail due to y greater than 1"
+```
+
+---
+
+# Examining the Error 
+
+Fearon and Laitin's data fails to replicate because of a bad data entry. 
+
+
+```
+##      onset        
+##  Min.   :0.00000  
+##  1st Qu.:0.00000  
+##  Median :0.00000  
+##  Mean   :0.01725  
+##  3rd Qu.:0.00000  
+##  Max.   :4.00000
+```
+
+The problem entry is Russia 1946
+
+
+```r
+fearon %&gt;% 
+  filter(onset == 4)%&gt;% 
+  select(country, year, onset)
+```
+
+```
+## # A tibble: 1 x 3
+##   country  year onset
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+## 1 RUSSIA   1946     4
+```
+---
+
+# Fixing The Error 
+
+
+```r
+fearon &lt;- fearon %&gt;%
+  mutate(onset = case_when(
+    onset == 4~1,
+    TRUE~onset))
+
+# Now this will work 
+f1 &lt;- glm(onset ~ warl + gdpenl + lpopl1 + lmtnest + 
+            ncontig + Oil + nwstate + instab + polity2l + 
+            ethfrac + relfrac, data = fearon, family = "binomial")
+tidy(f1)
+```
+
+```
+## # A tibble: 12 x 5
+##    term        estimate std.error statistic  p.value
+##    &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)  -6.73      0.736     -9.15  5.76e-20
+##  2 warl         -0.954     0.314     -3.04  2.40e- 3
+##  3 gdpenl       -0.344     0.0718    -4.79  1.67e- 6
+##  4 lpopl1        0.263     0.0727     3.62  2.99e- 4
+##  5 lmtnest       0.219     0.0848     2.58  9.83e- 3
+##  6 ncontig       0.443     0.274      1.62  1.06e- 1
+##  7 Oil           0.858     0.279      3.07  2.13e- 3
+##  8 nwstate       1.71      0.339      5.05  4.45e- 7
+##  9 instab        0.618     0.235      2.63  8.62e- 3
+## 10 polity2l      0.0209    0.0168     1.24  2.14e- 1
+## 11 ethfrac       0.166     0.373      0.446 6.56e- 1
+## 12 relfrac       0.285     0.509      0.560 5.75e- 1
+```
+
+---
+class: center, middle 
+# Using the Verbs in a real analysis 
+
+The first demonstration of a basic workflow with our verbs is a replication of Daniel Altman's "The Evolution of Territorial Conquest after 1945 and the Limits of the Norm of Territorial Integrity"
+
+.center[
+&lt;img src="img/altman.png" width="400px" height="450px" /&gt;
+]
+
+---
+
+# Replicating Altman 2020  
+
+We will do it as a coefficient plot 
+.center[
+&lt;img src="dataWrangling101_files/figure-html/unnamed-chunk-13-1.png" width="500px" /&gt;
+]
+---
+    
+# Step 1: Read in Data 
+    
+We use haven::read_dta() to read in STATA files. 
+
+
+```r
+## Use read_dta() from haven to import .dta file 
+conquest &lt;- read_dta(here("Conquest REP.dta"))
+```
+
+---
+    
+# Step 2: Wrangle Data 
+    
+Using mutate(), we apply a log scale to two variables, recode two variables, and create two new variables. 
+
+Note the filter() command to subset to just the rows where entire == 0 and retaliatory == 0. 
+
+
+```r
+## Generate variables used in regression specifications 
+
+data &lt;- conquest %&gt;% 
+    mutate(logmilex = log(milex),
+           logmilexchal = log(milexadv),
+           logmilexshare = logmilex / (logmilexchal + logmilex),
+           rspolity2 = polity2 + 10, 
+           rspolity2adv = polity2adv + 10, 
+           rspolity2int = rspolity2 * rspolity2adv)%&gt;%
+    filter(entire == 0, #&lt;&lt;
+           retaliatory == 0) #&lt;&lt;
+```
+
+---
+    
+# Step 3: Fit Models 
+    
+We will fit three models. For exposition, here is the first model. 
+
+
+```r
+## Logistic Model Fit for Model 1 
+m1 &lt;- glm(cowwar ~ popul + ethnic + island + colony + 
+            logmilexshare + rspolity2 + rspolity2adv + 
+            rspolity2int, 
+          data = data, 
+          family = "binomial")
+
+##  Replicate clustered stata errors 
+o1 &lt;- coeftest(m1, #&lt;&lt;
+               vcov. = vcovCL(m1, #&lt;&lt;
+                              type = "HC0", #&lt;&lt;
+                              cluster = data$confnum))%&gt;% #&lt;&lt;
+    tidy()%&gt;%
+    mutate(model = "Model 1")
+```
+
+The highlighted code is the R implementation of Stata's cluster() command for logistic models
+
+---
+
+# Step 3: Fit Models 
+
+For output, we want to put our models into one data frame. 
+
+
+```r
+## Bind Results into a single data frame 
+results &lt;- bind_rows(list(o1,o2,o3))%&gt;%
+  mutate(conf.low = estimate - std.error,
+         conf.high = estimate + std.error) %&gt;%
+  # We don't need the intercept so filter it out 
+filter(term != "(Intercept)")%&gt;%
+    # Not a necessary step. The following is done to match Altman paper
+    mutate(term = factor(term, 
+                         levels = c("tcstratloc", "tcresource",
+                                    "rspolity2int", "rspolity2adv", 
+                                    "rspolity2", "logmilexshare",
+                                    "colony", "island",
+                                    "ethnic","garrison",
+                                    "popul")))
+```
+
+---
+    
+# Step 4: Report Results 
+    
+I'm partial to graphs whenever possible. What follows is example ggplot2 code. 
+
+
+```r
+ ggplot(results, aes(x = term, y = estimate, group = model))+
+  geom_point()+
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high))+
+  scale_x_discrete(labels = c("Strategic Location", 
+                              "Natural Resources", 
+                              "Regime Type Interaction", 
+                              "Challenger Regime Type",
+                              "Defender Regime Type", 
+                              "Defender Power Share", 
+                              "Colony", "Island", 
+                              "Ethnic Motive", "Garrison",
+                              "Population"))+
+  coord_flip()+
+  facet_wrap(~model)+
+  ylim(-15,15)+
+  ylab("")+
+  xlab("")+
+  theme_classic()+
+  labs(title = "Conditions Under Which Conquest Attempts More Often Lead to War", 
+       subtitle = "Table 6", 
+       caption = "Altman 2020")
+```
+
+---
+
+# Part 2: Robust SEs In R the Easy Way
+
+---
+
+# Robust SEs (Conceptual)
+
+Standard Errors are always wrong
+
+Your data never has errors distributed with a constant variance 
+
+There is practically never any harm in assuming that the errors are not distributed with a constant variance 
+
+Everyone is going to ask to see your regressions with heteroskedastic consistent standard errors. 
+
+---
+
+# Robust SEs in R 
+
+Base R does not compute HC errors by default. This means that we require additional packages. 
+
+  - Yes, this is annoying. 
+  - Yes, it used to be easier to do this in Stata than in R
+  
+Fortunately, the `estimatr` package more or less solves all of your problems if you are using OLS as an estimation strategy
+
+---
+# Conceptual Example 
+
+Imagine we are running an experiment of 1000 people with a pre-treatment covariate x, which represents a pre-test score
+
+
+
+
+```
+##     ID         x          y0       y1 treat_indicator           y
+## 1 0001 0.9148060  1.94394676 2.943947               0  1.94394676
+## 2 0002 0.9370754  1.85185028 2.851850               1  2.85185028
+## 3 0003 0.2861395  0.28368327 1.283683               1  1.28368327
+## 4 0004 0.8304476  0.96645718 1.966457               0  0.96645718
+## 5 0005 0.6417455 -0.07840803 0.921592               0 -0.07840803
+## 6 0006 0.5190959  0.32097162 1.320972               0  0.32097162
+```
+
+---
+
+# Conceptual Example Continued 
+
+the estimatr packages provides `lm_robust()` to fit linear models with heteroskedastic standard errors. 
+
+
+```r
+lm_vanilla &lt;- lm_robust(y~treat_indicator + x, data = fake_data, se_type = "HC0")
+
+lm_stata &lt;- lm_robust(y~treat_indicator + x, data = fake_data, se_type = "stata")
+```
+
+You can even easily replicate stata errors with a single argument option 
+
+---
+
+# Conceptual Example Continued 
+
+&lt;table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;"&gt;
+&lt;caption&gt;Statistical models&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;Model 1&lt;/th&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;Model 2&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(Intercept)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-0.11&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-0.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.07)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.07)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;treat_indicator&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.03&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.03&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.06)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.06)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;x&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.14&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.14&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.11)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.11)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.27&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.27&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Adj. R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.26&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.26&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1000&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="border-bottom: 2px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;RMSE&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.00&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;1.00&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="font-size: 0.8em;" colspan="3"&gt;&lt;sup&gt;***&lt;/sup&gt;p &amp;lt; 0.001; &lt;sup&gt;**&lt;/sup&gt;p &amp;lt; 0.01; &lt;sup&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+
+# Benedetto, Hix, and Matrorocco 2020 
+
+Benedetto, Hix, and Matrorocco (BHM) study the electoral history of social democratic parties in Europe. 
+
+They are interested in the correlates of social democracy party vote shares in different time periods during the 20th century
+
+---
+
+# Replicating BHM 
+
+For replication, we will focus on their first model of correlates between 1918-1939 
+
+.center[
+&lt;img src="img/bhm.png" width="2835" /&gt;
+]
+---
+
+# Data Cleaning 
+
+
+```r
+BHM &lt;- read_dta(here("Workshop1/data/BHM_SocialDemocratsDatabase_Final.dta"))
+
+BHM_wrangled &lt;- BHM %&gt;%
+    group_by(country_code, election_year)%&gt;%
+    mutate(dup = ifelse(n() ==1, 0, n()))%&gt;%
+    ungroup()%&gt;%
+    filter(year &gt;= 1918, year &lt;= 1939, #&lt;&lt;
+           dup == 0) #&lt;&lt;
+```
+
+---
+
+# Model Fit 
+
+In Stata, BHM fit the following: 
+
+```
+xtreg sd_vote_share pubspend_comb elsyst_dm_log sd_gov_single
+sd_gov_coal_pm sd_gov_coal_other turnout 
+d1920s d1930s if year&gt;=1918 &amp; year&lt;=1939, 
+fe cluster(country_code)
+```
+
+The equivalent syntax in R using `estimatr::lm_robust()`
+
+
+```r
+# Previous data wrangling means we have already subsetted to 
+# appropriate years
+o4 &lt;- lm_robust(sd_vote_share ~ pubspend_comb + elsyst_dm_log +
+                  sd_gov_single + sd_gov_coal_pm + sd_gov_coal_other +
+                  turnout+  d1920s, data = BHM_wrangled, 
+                fixed_effects = ~country_code, 
+                clusters = country_code, 
+                se_type = "stata")%&gt;% # though for annoying reasons we probably want CR0
+  tidy()
+```
+
+---
+
+# Model Fit 2
+
+We get the same coefficients and slightly different clustered standard errors. 
+
+&lt;table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;"&gt;
+&lt;caption&gt;Statistical models&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;Model 1&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Public Spending (% of GDP&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-0.10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.14)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;District Magnitude (log)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-2.34&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(5.46)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;SD party in gov't (single-party)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(1.88)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;SD party in gov't (coalition-PM)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.53&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(3.52)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;SD party in gov't (coalition-junior)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-0.46&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(3.32)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Turnout&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.27&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.13)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Decade Dummy&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-2.13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(1.31)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.89&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Adj. R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.85&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;77&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;RMSE&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;4.69&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="border-bottom: 2px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;N Clusters&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="font-size: 0.8em;" colspan="2"&gt;&lt;sup&gt;***&lt;/sup&gt;p &amp;lt; 0.001; &lt;sup&gt;**&lt;/sup&gt;p &amp;lt; 0.01; &lt;sup&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+# Data Wranging and Manipulation 
+
+Thanks for participating. Code, data, and the presentation is available at https://github.com/asteves/ircp_workshops
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
