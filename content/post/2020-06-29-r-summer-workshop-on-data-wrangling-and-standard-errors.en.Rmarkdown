@@ -1,0 +1,32 @@
+---
+title: R Summer Workshop on Data Wrangling and Standard Errors
+author: alex
+date: '2020-06-29'
+slug: r-summer-workshop-on-data-wrangling-and-standard-errors
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-06-29T14:40:00-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+Today I gave a workshop on common data manipulation tasks in R. I was fortunate to have a great audience of graduate students from the department. 
+
+The main goal of the workshop was to introduce participants to ways of thinking about data manipulation. I made heavy use of the tidyverse. In addition, I walked through several replications of published research to show how basic manipulation can be when doing research. 
+
+The workshop was the first time I have given a virtual seminar, and I suspect I learned more today about how to teach in a virtual environment than participants learned about data manipulation. 
+
+The slides are below and a link to the R code is [here](https://github.com/asteves/ircp_workshops/tree/master/Workshop1)
+
+## Slides 
+
+```{r, echo = F}
+knitr::include_url('https://alexstephenson.me/slides/dataWrangling101.html#1')
+```
