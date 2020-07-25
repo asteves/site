@@ -108,13 +108,6 @@ Presuming you have downloaded the V-Dem data, we can read it into R with `read_c
 
 
 ```r
-vdem <- vdem <- data.table::fread("~/Desktop/Research/forOthers/Science_Susan/data/V-Dem-CY-Core-v10.csv")%>%
-  select(contains("country"), COWcode, year, v2x_polyarchy)%>%
-  filter(year %in% c(1992, 2010, 2019))
-```
-
-
-```r
 ## 1992
 vdem92 <- vdem %>% 
   filter(year == 1992)
