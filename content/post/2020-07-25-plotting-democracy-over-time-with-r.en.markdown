@@ -178,4 +178,4 @@ makeMap(map_2019, "2019")
 
 ## Conclusion 
 
-R's GIS ecosystem has evolved to be robust and user-friendly. This post scratches the surface of R's mapping capabilities. Readers should consult [RSpatial](https://rspatial.org/), an extensive list of spatial data analysis resources, and modeling resources. 
+R's GIS ecosystem has evolved to be robust and user-friendly. This post scratches the surface of R's mapping capabilities. Readers should consult [RSpatial](https://rspatial.org/), an extensive list of spatial data analysis resources, and modeling resources. a
