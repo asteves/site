@@ -21,7 +21,7 @@ projects: []
 
 ## Introduction 
 
-Recently, I was asked to help make some maps for a research article. I initially had some reticence, as it had been a long time since I worked with GIS systems. To my (pleasant) surprise, the R spatial ecosystem has evolved to make the process extremely user friendly. In the spirit of "write it down to not forget" this post provides a beginning to end tutorial for plotting maps across time. To give the tutorial a practical application, I focus on plotting the changes in electoral democracy across time using the V-Dem index. 
+Recently, I made some maps for a research article. I initially had some reticence, as it had been a long time since I worked with GIS systems. To my (pleasant) surprise, the R spatial ecosystem has evolved to make the process extremely user friendly. In the spirit of "write it down to not forget," this post provides a beginning to end tutorial for plotting maps across time. To give the tutorial a practical application, I focus on plotting the electoral democracy changes across time using the V-Dem index. 
 
 ## What Packages do I need?
 
@@ -49,19 +49,19 @@ library(tidyverse)
 
 Here is what we're using each package for: 
 
-- `cshapes` is an R package for the [cshapes](http://nils.weidmann.ws/projects/cshapes.html) project, a dataset that provides historical maps of state boundaries and capitals in the post-WW2 period. Since countries achieve independence at different times, we want access to shapefiles that take into account the political topography of the world.  
+- `cshapes` is an R package for the [cshapes](http://nils.weidmann.ws/projects/cshapes.html) project, a dataset that provides historical maps of state boundaries and capitals in the post-WW2 period. Since countries achieve independence at different times, we want access to shapefiles that take into account the world's political topography.  
 - `countrycode` is my favorite utility package for doing comparative and IR coding work. Unquestionably, the most annoying aspect of IR datasets is the lack of standardization of country names. Is it United States? USA? United States of America? `countrycode` can convert to and from 600+ variants of country names.
-- `here` is a nice package for letting R take care of relative file paths. The package is a lifesaver for reproducibility. 
-- `rnaturalearth` and `rnaturalearthdata` give us modern world map shapefiles. 
+- `here` is an excellent package for letting R take care of relative file paths. The package is a lifesaver for reproducibility. 
+- `rnaturalearth` and `rnaturalearthdata` give us the current world map shapefiles. 
 - `sf` is one of the workhorse GIS packages in R. It implements functions for objects that implement the simple feature access standard. 
-- `rcartocolor` gives us pretty colors. As a colorblind individual, I am a big fan of packages that give me access to pre-approved pretty color palettes. 
+- `rcartocolor` gives us pretty colors. As a colorblind individual, I am a big fan of packages that provide me access to pre-approved beautiful color palettes. 
 - `tidyverse` for reading, munging, cleaning, and plotting our polygons and data. 
 
 ## Bring on the Polygons 
 
-We are going to track electoral democracy following the end of the Cold War with three snapshots of the world: 1992, 2010, and 2019. Of course, to paraphrase Carl Sagan, if we wish to show democratic changes from scratch, we must first invent the universe. Here that means we need to read in appropriate shapefiles to our environment. We will do that using functions from `cshapes` and `sf`. 
+We will track electoral democracy following the end of the Cold War with three snapshots of the world: 1992, 2010, and 2019. Of course, to paraphrase Carl Sagan, if we wish to show democratic changes from scratch, we must first invent the universe. Here that means we need to read in the appropriate shapefiles to our environment. We will do that using functions from `cshapes` and `sf.` 
 
-Note that `cshapes` is not updated past 2016, so we will use a different shapefile for the present day. You may receive a warning about a deprecated function, but that will not affect the code. 
+Note that `cshapes` has not been updated for maps after 2016, so we will use a different shapefile for the present day. You may receive a warning about a deprecated function, but that will not affect the code. 
 
 
 ```r
@@ -104,7 +104,7 @@ Our next step is to add data about electoral democracy to our shapefiles. Shapef
 
 Our data on democracy comes from the [V-Dem](https://www.v-dem.net) project. Specifically, we are going to focus on the variable `v2x_polyarchy` which measures to what extent the ideal of electoral democracy is in its fullest sense achieved. Ignore the thorny political theory questions of what any of those words mean individually, much less together in a sentence. This variable is an index formed by taking a weighted average of five other indices measuring aspects of electoral freedom and a five-way multiplicative interaction between those indices. Again, best to ignore the measurement challenges. 
 
-Presuming you have downloaded the V-Dem data, we can read it in to R with `read_csv()`. The next code block presumes that you have the data in R and named it vdem. 
+Presuming you have downloaded the V-Dem data, we can read it into R with `read_csv()`. The next code block presupposes that you have the data in R and named it vdem. 
 
 
 ```r
@@ -147,7 +147,7 @@ map_2019 <- left_join(map_19, vdem19,
 
 ## Plot Pretty Maps
 
-In an effort to not write the same ggplot calls three times, I just put them all in one function. 
+To not write the same ggplot calls three times, I just put them all in one function. 
 
 
 ```r
@@ -163,7 +163,7 @@ makeMap <- function(df, year = "Default"){
 }
 ```
 
-Apply it to our dataframes for pretty map wonder. 
+Apply it to our data frames for pretty map wonder. 
 
 
 ```r
@@ -178,4 +178,4 @@ makeMap(map_2019, "2019")
 
 ## Conclusion 
 
-R's GIS ecosystem has evolved to be powerful and user-friendly. This post just scratches the surface of R's mapping capabilities. Readers should consult [RSpatial](https://rspatial.org/), an extensive list of resources for spatial data analysis and modeling. 
+R's GIS ecosystem has evolved to be robust and user-friendly. This post scratches the surface of R's mapping capabilities. Readers should consult [RSpatial](https://rspatial.org/), an extensive list of spatial data analysis resources, and modeling resources. 
