@@ -45,7 +45,7 @@ install.packages(c("AER", "tidyverse", "estimatr", "texreg"))
 
 In the first demonstration, I create a simple dataset with three predictors, two potential outcomes, and the observed outcome based on a treatment variable. 
 
-By construction, $\tau = 1$ and the data generating process includes multiple pre-treatment covariates and an interaction. The dataset also includes two useless variables. In experimental or administrative datasets, there are often a large number of covariates that are unused in regression specifications. 
+By construction, $$\tau = 1$$ and the data generating process includes multiple pre-treatment covariates and an interaction. The dataset also includes two useless variables. In experimental or administrative datasets, there are often a large number of covariates that are unused in regression specifications. 
 
 ```{r, results='asis', message=F, warning=F}
 set.seed(42)
@@ -72,7 +72,7 @@ formulas <- paste("yobs~", predictors)
 print(formulas)
 ```
 
-Neat! We now get our formula specifications in the right order for our table. Using `lm_robust()`, we can now estimate our regression. Unsurprisingly, the model with the interaction perfectly estimates $\tau$. 
+Neat! We now get our formula specifications in the right order for our table. Using `lm_robust()`, we can now estimate our regression. Unsurprisingly, the model with the interaction perfectly estimates $$\tau$$. 
 
 ```{r, results = 'asis'}
 
