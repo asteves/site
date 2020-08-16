@@ -89,7 +89,7 @@ formulas %>%
 While none of the mechanics change from simulated data to real data (the point!), I find it sometimes helpful to show a technique against actual data. To do so, let's use data on California schools available in the `AER` package. For this example, we are going to do some basic cleaning of the dataset to get a variable for the student-teacher ratio (STR), and average test score (score). In addition, we will create two binary variables for a high student-teacher ratio (HiSTR) and a high percentage of English learners in the schools (HiEL). 
 
 
-```{r, results = 'asis', message = F}
+```{r, message = F}
 data("CASchools")
 
 # Make use of dplyr's helpful data munging operations 
@@ -108,7 +108,7 @@ predictors <- accumulate(cols_to_use, function(a,b){
 formulas  <- paste("score~", predictors)
 ```
 
-```{r}
+```{r,results = 'asis'}
 formulas %>%
   map(~lm_robust(as.formula(.x), data = CASchools, se_type = "stata"))%>%
   htmlreg(include.ci = F)

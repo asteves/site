@@ -265,97 +265,95 @@ formulas %>%
   htmlreg(include.ci = F)
 ```
 
-```
-## <table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;">
-## <caption>Statistical models</caption>
-## <thead>
-## <tr>
-## <th style="padding-left: 5px;padding-right: 5px;">&nbsp;</th>
-## <th style="padding-left: 5px;padding-right: 5px;">Model 1</th>
-## <th style="padding-left: 5px;padding-right: 5px;">Model 2</th>
-## <th style="padding-left: 5px;padding-right: 5px;">Model 3</th>
-## </tr>
-## </thead>
-## <tbody>
-## <tr style="border-top: 1px solid #000000;">
-## <td style="padding-left: 5px;padding-right: 5px;">(Intercept)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">657.25<sup>***</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">664.69<sup>***</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">664.14<sup>***</sup></td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.25)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.25)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.39)</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">HiSTR</td>
-## <td style="padding-left: 5px;padding-right: 5px;">-7.17<sup>***</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">-3.48<sup>*</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">-1.91</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.83)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.55)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.93)</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">HiEL</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">-19.76<sup>***</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">-18.32<sup>***</sup></td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(1.59)</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(2.33)</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">HiSTR:HiEL</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">-3.26</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
-## <td style="padding-left: 5px;padding-right: 5px;">(3.12)</td>
-## </tr>
-## <tr style="border-top: 1px solid #000000;">
-## <td style="padding-left: 5px;padding-right: 5px;">R<sup>2</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.03</td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.29</td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.29</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">Adj. R<sup>2</sup></td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.03</td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.29</td>
-## <td style="padding-left: 5px;padding-right: 5px;">0.29</td>
-## </tr>
-## <tr>
-## <td style="padding-left: 5px;padding-right: 5px;">Num. obs.</td>
-## <td style="padding-left: 5px;padding-right: 5px;">420</td>
-## <td style="padding-left: 5px;padding-right: 5px;">420</td>
-## <td style="padding-left: 5px;padding-right: 5px;">420</td>
-## </tr>
-## <tr style="border-bottom: 2px solid #000000;">
-## <td style="padding-left: 5px;padding-right: 5px;">RMSE</td>
-## <td style="padding-left: 5px;padding-right: 5px;">18.74</td>
-## <td style="padding-left: 5px;padding-right: 5px;">16.06</td>
-## <td style="padding-left: 5px;padding-right: 5px;">16.06</td>
-## </tr>
-## </tbody>
-## <tfoot>
-## <tr>
-## <td style="font-size: 0.8em;" colspan="4"><sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05</td>
-## </tr>
-## </tfoot>
-## </table>
-```
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;">
+<caption>Statistical models</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">&nbsp;</th>
+<th style="padding-left: 5px;padding-right: 5px;">Model 1</th>
+<th style="padding-left: 5px;padding-right: 5px;">Model 2</th>
+<th style="padding-left: 5px;padding-right: 5px;">Model 3</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">(Intercept)</td>
+<td style="padding-left: 5px;padding-right: 5px;">657.25<sup>***</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">664.69<sup>***</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">664.14<sup>***</sup></td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.25)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.25)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.39)</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">HiSTR</td>
+<td style="padding-left: 5px;padding-right: 5px;">-7.17<sup>***</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-3.48<sup>*</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-1.91</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.83)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.55)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.93)</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">HiEL</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">-19.76<sup>***</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-18.32<sup>***</sup></td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(1.59)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(2.33)</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">HiSTR:HiEL</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">-3.26</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(3.12)</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">R<sup>2</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">0.03</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.29</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.29</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">Adj. R<sup>2</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">0.03</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.29</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.29</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">Num. obs.</td>
+<td style="padding-left: 5px;padding-right: 5px;">420</td>
+<td style="padding-left: 5px;padding-right: 5px;">420</td>
+<td style="padding-left: 5px;padding-right: 5px;">420</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">RMSE</td>
+<td style="padding-left: 5px;padding-right: 5px;">18.74</td>
+<td style="padding-left: 5px;padding-right: 5px;">16.06</td>
+<td style="padding-left: 5px;padding-right: 5px;">16.06</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="4"><sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05</td>
+</tr>
+</tfoot>
+</table>
 
 As we can see, functional programming principles can make our code easier to read and require less typing. The less we have to type, the less we are likely to accidentally introduce a mistake into our work. In addition, the more we get to be lazy, and being lazy is wonderful. 
