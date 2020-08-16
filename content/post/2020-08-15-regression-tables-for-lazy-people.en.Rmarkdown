@@ -1,0 +1,118 @@
+---
+title: Regression Tables for Lazy People
+author: alex
+date: '2020-08-15'
+slug: regression-tables-for-lazy-people
+categories:
+  - R
+tags:
+  - R
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-08-15T23:38:17-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+In the spirit of writing as note-taking, I wanted to share a neat little trick in R for running regressions. By far the most common table in a political science paper is a regression table. Often, researchers run multiple regression specifications and then present them in a singular table. Each regression may have different sets of variables, or one specification will include an interaction effect. This can mean a lot of typing, which can implicitly violate DRY principles for coding. 
+
+I came across a nice use of the `accumulate()` function from the `purrr` package that both speeds up this task, and makes it programmatic for easy replication. Lazy win!
+
+```{r setup, include=FALSE, warning = F, message = F}
+knitr::opts_chunk$set(echo = TRUE)
+library(AER)
+library(dplyr)
+library(estimatr)
+library(texreg)
+library(purrr)
+
+```
+
+The basic concept behind `accumulate()` is to apply a function recursively over a list starting from the left. If you want to do so in reverse, then use `accumulate_right()`. Given the name, the main use of this function is for cumulative sums, but we can take advantage of the character formula ability of R to run different specifications. 
+
+In order to replicate this post on your own machine, you will need the following packages. 
+
+```{r, eval = F}
+install.packages(c("AER", "tidyverse", "estimatr", "texreg"))
+```
+
+## A fake data example 
+
+In the first demonstration, I create a simple dataset with three predictors, two potential outcomes, and the observed outcome based on a treatment variable. 
+
+By construction, $\tau = 1$ and the data generating process includes multiple pre-treatment covariates and an interaction. The dataset also includes two useless variables. In experimental or administrative datasets, there are often a large number of covariates that are unused in regression specifications. 
+
+```{r, results='asis', message=F, warning=F}
+set.seed(42)
+N = 1000
+dat <- tibble(
+  x1 = rnorm(N),
+  x2 = rnorm(N, 1, 10),
+  x3 = rnorm(N, 10, 3),
+  z = sample(c(rep(1,N/2), rep(0,N/2)), N, replace = F),
+  y0 = x1 + x2 + x3 + x2*x3+runif(N),
+  y1 = y0 + 1,
+  yobs = ifelse(z, y1, y0),
+  useless1 = runif(N),
+  useless2 = runif(N)
+) 
+```
+
+Now, we can pass our columns of interest and let accumulate do the work. 
+```{r}
+cols_to_use <- c("z", "x1", "x2", "x3", 'x2*x3')
+predictors <- accumulate(cols_to_use, function(a,b){paste(a,b, sep=" + ")})
+formulas <- paste("yobs~", predictors)
+
+print(formulas)
+```
+
+Neat! We now get our formula specifications in the right order for our table. Using `lm_robust()`, we can now estimate our regression. Unsurprisingly, the model with the interaction perfectly estimates $\tau$. 
+
+```{r, results = 'asis'}
+
+# Functional programming with purrr using map()
+# lm_robust requires that we coerce our character to a formula object 
+formulas %>% 
+  map(~lm_robust(as.formula(.x), data = dat, se_type = "stata"))%>%
+  htmlreg(include.ci = F)
+
+```
+
+## An Application with Real Data 
+
+While none of the mechanics change from simulated data to real data (the point!), I find it sometimes helpful to show a technique against actual data. To do so, let's use data on California schools available in the `AER` package. For this example, we are going to do some basic cleaning of the dataset to get a variable for the student-teacher ratio (STR), and average test score (score). In addition, we will create two binary variables for a high student-teacher ratio (HiSTR) and a high percentage of English learners in the schools (HiEL). 
+
+
+```{r, results = 'asis', message = F}
+data("CASchools")
+
+# Make use of dplyr's helpful data munging operations 
+CASchools <- CASchools %>% 
+  mutate(STR = students/teachers,
+         score = (read + math)/2,
+         HiSTR = as.numeric(STR >=20),
+         HiEL = as.numeric(english >= 10))
+
+# Exactly as before, but using the variables in the dataset
+cols_to_use <- c("HiSTR", "HiEL", "HiSTR*HiEL")
+predictors <- accumulate(cols_to_use, function(a,b){
+  paste(a,b,sep = "+")
+})
+
+formulas  <- paste("score~", predictors)
+```
+
+```{r}
+formulas %>%
+  map(~lm_robust(as.formula(.x), data = CASchools, se_type = "stata"))%>%
+  htmlreg(include.ci = F)
+
+```
+
+As we can see, functional programming principles can make our code easier to read and require less typing. The less we have to type, the less we are likely to accidentally introduce a mistake into our work. In addition, the more we get to be lazy, and being lazy is wonderful. 
