@@ -4,7 +4,7 @@
     <title>The Standard Errors of Persistence</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alex Stephenson" />
-    <meta name="date" content="2020-04-05" />
+    <meta name="date" content="2020-08-19" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide
 ## A Discussion of Kelly 2019
 ### Alex Stephenson
 ### UC Berkeley
-### 2020-04-05
+### 2020-08-19
 
 ---
 
@@ -115,9 +115,11 @@ Think of this as the weighted sum of covariance between every pair of residuals 
 
 ---
 
-# Picture of Two Independent Random Spatial Processes
+# Two Independent Spatial Processes
 
-&lt;img src="kelly_files/figure-html/unnamed-chunk-2-1.png" width="504" /&gt;
+
+
+![:scale 75%](spatnoise.png)
 
 ---
 
@@ -125,48 +127,53 @@ Think of this as the weighted sum of covariance between every pair of residuals 
 
 Even though by construction there is no relationship, a linear regression reports a negative and statistically significant coefficient
 
-
-&lt;table cellspacing="0" align="center" style="border: none;"&gt;
-&lt;caption align="bottom" style="margin-top:0.3em;"&gt;Statistical models&lt;/caption&gt;
+&lt;table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;"&gt;
+&lt;caption&gt;Statistical models&lt;/caption&gt;
+&lt;thead&gt;
 &lt;tr&gt;
-&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;&lt;/b&gt;&lt;/th&gt;
-&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;Model 1&lt;/b&gt;&lt;/th&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th style="padding-left: 5px;padding-right: 5px;"&gt;Model 1&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Intercept&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.69&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;Intercept&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;0.69&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.06)&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;(0.06)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Hopscotch Enthusiasts in 1900&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;-0.43&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;Hopscotch Enthusiasts in 1900&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;-0.43&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;&amp;nbsp;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;(0.11)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="border-top: 1px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.20&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;(0.11)&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Adj. R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.19&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td style="border-top: 1px solid black;"&gt;R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
-&lt;td style="border-top: 1px solid black;"&gt;0.20&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;50&lt;/td&gt;
 &lt;/tr&gt;
+&lt;tr style="border-bottom: 2px solid #000000;"&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;RMSE&lt;/td&gt;
+&lt;td style="padding-left: 5px;padding-right: 5px;"&gt;0.14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
 &lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;Adj. R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;0.19&lt;/td&gt;
+&lt;td style="font-size: 0.8em;" colspan="2"&gt;&lt;sup&gt;***&lt;/sup&gt;p &amp;lt; 0.001; &lt;sup&gt;**&lt;/sup&gt;p &amp;lt; 0.01; &lt;sup&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;Num. obs.&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;50&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="border-bottom: 2px solid black;"&gt;RMSE&lt;/td&gt;
-&lt;td style="border-bottom: 2px solid black;"&gt;0.14&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="padding-right: 12px; border: none;" colspan="3"&gt;&lt;span style="font-size:0.8em"&gt;&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;p &amp;lt; 0.001, &lt;sup style="vertical-align: 0px;"&gt;**&lt;/sup&gt;p &amp;lt; 0.01, &lt;sup style="vertical-align: 0px;"&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
+&lt;/tfoot&gt;
 &lt;/table&gt;
 
 ---
@@ -189,13 +196,13 @@ A Moran Monte Carlo test reveals that our observed Moran statistic is highly unl
 
 # The real world is spatially correlated 
 
-![:scale 80%](inflation.png)
+![:scale 75%](inflation.png)
 
 ---
 
 # The real world is spatially correlated 
 
-![:scale 80%](significance1.png)
+![:scale 75%](significance1.png)
 
 ---
 
@@ -215,19 +222,19 @@ Replicates the leading regression in the paper exactly
 
 # Moran Index for Papers 
 
-![](moran.png)
+![:scale 75%](moran.png)
 
 ---
 
 # The explanatory power of noise 
 
-![](noisesig.png)
+![:scale 75%](noisesig.png)
 
 ---
 
 # Actual predictors explain noise 
 
-![](depend.png)
+![:scale 75%](depend.png)
 
 ---
 

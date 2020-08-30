@@ -1,0 +1,130 @@
+---
+title: Simulating Lead Changes with R
+author: alex
+date: '2020-08-30'
+slug: simulating-lead-changes-with-r
+categories:
+  - R
+tags:
+  - R
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-08-30T14:54:33-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+What constitutes an exciting game? One possibility is by looking at the amount teams trade off leads. For example, in 2014 the Portland Trailblazers and the Los Angeles Clippers had a record 40 lead changes in a single game. The previous record for 34 back in 2004 in a game between the then New Jersey Nets and the Phoenix Suns. Games like Portland-LA are especially interesting because they are rare. Most games have few lead changes. One team or player jumps out to an early lead and retains it for the rest of play. Less regularly, and thus more memorably, games can end with an end of game comeback. 
+
+To a first approximation, and the subject of this post, lead changes can be represented as a random walk. A random walk is a stochastic process that describes a path of random steps on some mathematical space. In a game, we can think of the space as time steps or possession. [Wikipedia](https://en.wikipedia.org/wiki/Random_walk) tells me that this is the elementary example of a random walk. Starting at 0, each possession the walk moves forward or backwards with equal probability. Often, these steps are represented by a +1 and -1. A sequence might go $${1, -1, 1, 1, -1}$$. 
+
+What does this have to do with lead changes? Intuitively, a random walk with equal probability will end up taking about as many steps forwards as backwards. We might then think that the number of lead changes or ties will be rather high, perhaps 1/4 of the number of total steps. It turns out we would be badly overestimating the number. The expected value of this process is well approximated by the formula $$\sqrt{\frac{2N}{\pi}$$ where $$N$$ is the number of steps. When N is 100, roughly the number of possessions in an NBA game, the average number of ties in a game is about 8. 
+
+We can simulate this process in R to verify this results with some experiments. 
+
+```{r}
+set.seed(42) # The answer to life, the universe, and everything
+```
+
+We will have two function to test two different question about lead changes. One lead change question might simply be the number of ties. Another question we might be interested is how many lead changes occur when a lead change is defined as one team taking the lead after previously being behind. This is usually what we mean when we talk about lead changes in games. As a spoiler, it's even less than the number of ties. 
+
+```{r}
+getLeadChanges <- function(vec){
+  # This function assumes that a lead change 
+  # means that there is a change from previous leader after a tie 
+  # for example (1, tie, 2) would be a lead change 
+  # but (1, tie, 1) would not
+  # In the first, the leader flips after the tie. 
+  N <- length(vec)
+  total <- 1
+  for(i in 2:N-1){
+    if(vec[i]==0){
+      if(vec[i + 1] != vec[i-1]){
+        total <- total + 1
+      }
+    }else{
+      total <- total + 0
+    }
+  }
+  return(total)
+}
+
+coinflip <- function(N){
+  # Set ups 
+  p1 <- 0 # total for p1
+  p2 <- 0 # total for p2 
+  flips <- NULL # Keep track of coin flip 
+  leader <- NULL # who is leader at current round 
+  
+  # Simulation Logic 
+  for(i in 1:N){
+    cf <- sample(c(1,-1), 1, prob = c(.5, .5))
+    flips[i] <- cf
+    if(cf == 1){
+      p1 <- p1 + 1
+    }else{
+      p2 <- p2 + 1
+    }
+    if(p1 > p2){
+      leader[i] <- 1
+    }
+    if(p1 < p2){
+      leader[i] <- -1
+    }
+    if(p1 == p2){
+      leader[i] <- 0
+    }
+  }
+  
+  # Outputs 
+  # Number of total ties
+  ties <- sum(leader == 0)
+  
+  # Number of total lead changes 
+  # See getLeadChanges() for explanation
+  tot <- getLeadChanges(leader)
+  
+  # We return everything as a list for diagnostic information
+  return(list(tot, leader, ties, flips, p1, p2))
+}
+```
+
+Now that we have our functions, we can just plug in values and let R do the work. One note, if we were worried about the performance aspect of this code, we would preallocate memory instead of adding the vectors like I am doing here. 
+
+As a minor coding note, I wrote 
+```{r}
+N <-100
+changes <- NULL
+leaderChanges <- NULL
+for(i in 1:1000){
+  cf <- coinflip(N)
+  leaderChanges[i] <- cf[[1]]
+  changes[i]<- cf[[3]] 
+}
+``` 
+
+Finally, because we are simulating 1000 different walks, let's take a look at the averages. First, how many ties do we have on average?
+
+```{r}
+mc <- mean(changes)
+mc
+
+## Note that the expected value of a random walk with equal probability 
+# becomes close to the following 
+# See https://mathworld.wolfram.com/RandomWalk1-Dimensional.html
+approx <- sqrt((2*N)/pi)
+approx 
+```
+
+Pretty close to the approximation function already proved in the literature. Second, how many lead changes do we have on average?
+```{r}
+mlc <- mean(leaderChanges) 
+mlc 
+```
+
+Now of course a basketball game rarely has a situation where two teams are perfectly evenly matched and the rules allow different number of points. Still, our little simulation provides a good check of our intuition about how impressive 40 lead changes in a single game can be as well as demonstrating the principle of "When in doubt, simulate!" 

@@ -153,17 +153,19 @@ plot_data <- data.frame(sim1 = raster::extract(y1, dataPoints),
 
 ---
 
-# Picture of Two Independent Random Spatial Processes
+# Two Independent Spatial Processes
 
-```{r, echo = F}
+```{r, echo = F, eval = F}
 
 # plot grids 
 sp::spplot(obj = yy, 
            names.attr = c("Hopscotch Enthusiasts in 1900", 
                           "Berkeley Admit Rate"),
-           main = list("An obviously spurious correlation between two Spatial Variables"))+
+           main = list("Spurious Correlation between two Spatial Variables"))+
   latticeExtra::layer(panel.points(x,y, col = "white", pch = 19), data = dataPoints)
 ```
+
+![:scale 75%](spatnoise.png)
 
 ---
 
@@ -219,13 +221,13 @@ plot(MC, main = "", las=1)
 
 # The real world is spatially correlated 
 
-![:scale 80%](inflation.png)
+![:scale 75%](inflation.png)
 
 ---
 
 # The real world is spatially correlated 
 
-![:scale 80%](significance1.png)
+![:scale 75%](significance1.png)
 
 ---
 
@@ -245,19 +247,19 @@ Replicates the leading regression in the paper exactly
 
 # Moran Index for Papers 
 
-![](moran.png)
+![:scale 75%](moran.png)
 
 ---
 
 # The explanatory power of noise 
 
-![](noisesig.png)
+![:scale 75%](noisesig.png)
 
 ---
 
 # Actual predictors explain noise 
 
-![](depend.png)
+![:scale 75%](depend.png)
 
 ---
 
