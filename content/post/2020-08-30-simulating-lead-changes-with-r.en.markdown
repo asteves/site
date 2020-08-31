@@ -23,7 +23,7 @@ What constitutes an exciting game? One possibility is by looking at the amount t
 
 To a first approximation, and the subject of this post, lead changes can be represented as a random walk. A random walk is a stochastic process that describes a path of random steps on some mathematical space. In a game, we can think of the space as time steps or possession. [Wikipedia](https://en.wikipedia.org/wiki/Random_walk) tells me that this is the elementary example of a random walk. Starting at 0, each possession the walk moves forward or backwards with equal probability. Often, these steps are represented by a +1 and -1. A sequence might go `\({1, -1, 1, 1, -1}\)`. 
 
-What does this have to do with lead changes? Intuitively, a random walk with equal probability will end up taking about as many steps forwards as backwards. We might then think that the number of lead changes or ties will be rather high, perhaps 1/4 of the number of total steps. It turns out we would be badly overestimating the number. The expected value of this process is well approximated by the formula `\(\sqrt{\frac{2N}{\pi}\)` where `\(N\)` is the number of steps. When N is 100, roughly the number of possessions in an NBA game, the average number of ties in a game is about 8. 
+What does this have to do with lead changes? Intuitively, a random walk with equal probability will end up taking about as many steps forwards as backwards. We might then think that the number of lead changes or ties will be rather high, perhaps 1/4 of the number of total steps. It turns out we would be badly overestimating the number. The expected value of this process is well approximated by the formula `\(\\sqrt{\\frac{2N}{\\pi}\)` where `\(N\)` is the number of steps. When N is 100, roughly the number of possessions in an NBA game, the average number of ties in a game is about 8. 
 
 We can simulate this process in R to verify this results with some experiments. 
 
@@ -65,7 +65,7 @@ coinflip <- function(N){
   
   # Simulation Logic 
   for(i in 1:N){
-    cf <- sample(c(1,-1), 1, prob = c(.5, .5))
+    cf <- rbinom(1,1,.5)
     flips[i] <- cf
     if(cf == 1){
       p1 <- p1 + 1
@@ -98,16 +98,16 @@ coinflip <- function(N){
 
 Now that we have our functions, we can just plug in values and let R do the work. One note, if we were worried about the performance aspect of this code, we would preallocate memory instead of adding the vectors like I am doing here. 
 
-As a minor coding note, I wrote 
+
 
 ```r
 N <-100
 changes <- NULL
 leaderChanges <- NULL
-for(i in 1:1000){
+for(i in 1:10000){
   cf <- coinflip(N)
   leaderChanges[i] <- cf[[1]]
-  changes[i]<- cf[[3]] 
+  changes[i]<- cf[[3]] + 1 # Because there's one tie at the beginning
 }
 ```
 
@@ -120,7 +120,7 @@ mc
 ```
 
 ```
-## [1] 6.959
+## [1] 8.0588
 ```
 
 ```r
@@ -143,7 +143,7 @@ mlc
 ```
 
 ```
-## [1] 4.486
+## [1] 4.4847
 ```
 
 Now of course a basketball game rarely has a situation where two teams are perfectly evenly matched and the rules allow different number of points. Still, our little simulation provides a good check of our intuition about how impressive 40 lead changes in a single game can be as well as demonstrating the principle of "When in doubt, simulate!" 
