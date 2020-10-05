@@ -15,9 +15,11 @@ header:
 
 ## Current Working Papers 
 
-*The devil's gambit: why autocrats benefit from external threats* 
+*The Effect of Delays in Service on Police Legitimacy:  Evidence from Minneapolis 911 Calls*
 
-*Monitoring Discontent: The Benefits of Mutinies for Leaders* 
+*Calling for Help:  Modeling Third-Party Counterbalancing on Coup Risk*
+
+*Justifying Deadly Force:  A Quantitative Text Analysis of Police Narratives*
 
 *Swords before Ploughshares: Extreme Repression in the Shadow of Civil War* with Dogus Aktan and [Gregoire Phillips](https://gregoirephillips.com/) 
 
