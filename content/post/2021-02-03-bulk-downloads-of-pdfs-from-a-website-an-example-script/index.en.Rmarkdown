@@ -48,7 +48,10 @@ if(!dir.exists(output_dir)){
   dir.create(output_dir)
   }
 
-# Website of interest 
+# Website of interest in the case I was working on 
+# All of the documents are stored at links with "viewcontent.cgi"
+# this provides a way to get just the pdfs instead of
+# all links 
 url <- "https://scholarworks.utep.edu/border_region/"
 
 # Now we just chain away to bulk download all the pdfs 
