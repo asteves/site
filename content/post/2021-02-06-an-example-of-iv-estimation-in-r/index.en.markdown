@@ -20,18 +20,18 @@ image:
 projects: []
 ---
 
-There have likely been more words written about the use and misuse of instrumental variables than exist atoms in the universe. When I was starting out in grad school, almost all of our methods education came in the context of experiments. Instrumental Variables were treated like a compliance problem. A researcher ran an experiment, but some people decided not to comply with treatment for some reason which led to missing values. By using the random assignment as an instrument for treatment, the researcher could find the Complier Average Treatment Effect (CATE). Without doing anything other than analyzing the experiment based on the intention to treat (ITT), the researcher would get an estimate that would be smaller and noisier. The CATE can be defined as: 
+There have likely been more words written about the use and misuse of instrumental variables than atoms in the universe. When I was starting in grad school, almost all of our methods education came in the context of experiments. Instrumental Variables were treated as a compliance problem. A researcher ran an experiment, but some people decided not to comply with treatment for some reason, which led to missing values. Using the random assignment as an instrument for treatment, the researcher could find the Complier Average Treatment Effect (CATE). Without doing anything other than analyzing the experiment based on the intention to treat (ITT), the researcher would get an estimate that would be smaller and noisier. The CATE can is defined as: 
 
 $$ \begin{aligned}
 CATE = \frac{ITT}{Pr(compliers)}
 \end{aligned} $$ 
 
 
-Importantly, the CATE does not equal what the researcher is really interested in, which is the Average Treatment Effect (ATE) unless the researcher got very lucky and the ATE for non-compliers is identical to the CATE. Incidentally, this probability has measure zero at least practically speaking. 
+Notably, the CATE does not equal what the researcher is interested in: the Average Treatment Effect (ATE). Or at least it will not unless the researcher got very lucky and the ATE for non-compliers is identical to the CATE. Incidentally, this probability has measure zero, at least practically speaking. 
 
-Of course, most of the time IV is considered in the case on non-experimental data for which the researcher plans to use a regression analysis and where there is a worry about an endogenous regressor. In this context, regression estimates will measure only the magnitude of association, but not the magnitude and direction of causation needed. Not great! 
+Of course, most of the time, IV is considered in the case of non-experimental data. The researcher plans to use regression analysis, and there is a worry about an endogenous regressor. In this context, regression estimates will measure only the magnitude of association but not the magnitude and direction of causation needed. Not great! 
 
-In this context, IV a common strategy to get the Local Average Treatment Effect (LATE), for which the most common estimation strategy is two stage least squares (2SLS). However, we can still use the reduced form division estimator and it is sometimes useful for pedagogical reasons. Consider the following example from [Cameron and Trevedi (2005).](https://www.google.com/books/edition/Microeconometrics/Zf0gCwxC9ocC?hl=en&gbpv=0)
+In this context, IV a common strategy to get the Local Average Treatment Effect (LATE), for which the most common estimation strategy is two-stage least squares (2SLS). However, we can still use the reduced form division estimator, and it is sometimes useful for pedagogical reasons. Consider the following example from [Cameron and Trevedi (2005).](https://www.google.com/books/edition/Microeconometrics/Zf0gCwxC9ocC?hl=en&gbpv=0)
 
 Suppose there is a data generating process (DGP) defined as follows:
 
@@ -113,9 +113,9 @@ num/den
 ## 0.5197239
 ```
 
-A substantially closer estimate, though not exactly .5. This is ok though because an IV estimator is not unbiased but is consistent. That means if we increase N, the estimator will coverge in probability to the parameter of interest. 
+A substantially closer estimate, though not precisely .5. This is ok. An IV estimator is not unbiased but is consistent. That means if we increase N, the estimator will converge in probability to the parameter of interest. 
 
-To prove it, you could run a simulation with different size N like the one coded below. I wrapped the procedure in this example into a function called `simulate`. 
+To prove it, you could simulate with different size N like the one coded below. I wrapped the procedure in this example into a function called `simulate`. 
 
 
 ```r
