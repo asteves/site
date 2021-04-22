@@ -21,6 +21,7 @@ projects: []
 
 ```{r, message=FALSE, warning = FALSE,include=FALSE}
 library(tidyverse)
+library(knitr)
 set.seed(42)
 ```
 In the spirit of notes to myself, here's a neat trick I learned to bulk recode lots of variables at once. 
@@ -34,7 +35,7 @@ raw_data <-tibble(
   var2 = sample(16:30, replace = F),
   var3 = sample(31:45, replace = F)
 )
-raw_data
+kable(raw_data)
 ```
 
 Because survey data is likely to contain errors, we have a subject matter expert look at the data. They come back with several changes that we need to make to the data. Helpfully, they put them into a data frame like the following. 
@@ -46,8 +47,10 @@ fixes <- tibble(
   original_response = as.integer(c(1, 28, 19, 34)),
   correct_response = as.integer(c(1000, 2800, 1900, 3400))
 )
+```
 
-fixes
+```{r}
+kable(fixes)
 
 ```
 
@@ -70,8 +73,10 @@ fix_data_b <- raw_data %>%
               TRUE~var3
         )
     )
+```
 
-fix_data_b
+```{r}
+kable(fix_data_b)
 ```
 
 A brute force solution is not so bad with only four fixes. What if we added another 25 fixes? Very quickly, this solution breaks down. Besides, there is a lot of unneeded typing, which increases the likelihood of making a mistake. Finally, there's no way to show off that we have a neat trick to make people think we are brilliant, when in fact, we are very lazy. 
@@ -85,8 +90,7 @@ raw_data_l <- raw_data %>%
   pivot_longer(cols = -ID,
                names_to = "var_name",
                values_to = "original_value")
-
-raw_data_l
+kable(head(raw_data_l))
 ```
 
 ### Step 2: Join our lookup table to our converted raw data. 
@@ -94,7 +98,8 @@ raw_data_l
 ```{r}
 raw_data_l %>% 
   left_join(fixes, by = c("ID", "var_name" = "original_var"))%>%
-  head()
+  head()%>%
+  kable()
 ```
 
 Note that we now a lot of NAs for each variable that does not require a correction. This is good! We can take advantage of that in Step 3. 
@@ -108,7 +113,8 @@ raw_data_l %>%
                                    original_value,
                                    correct_response))%>%
   select(ID, var_name, original_value, corrected_value)%>%
-  filter(ID %in% fixes$ID)
+  filter(ID %in% fixes$ID)%>%
+  kable()
 
 ```
 
@@ -122,7 +128,8 @@ raw_data_l %>%
                                    correct_response))%>%
   select(-original_value, -correct_response, -original_response)%>%
   pivot_wider(names_from = "var_name",
-              values_from = "corrected_value")
+              values_from = "corrected_value")%>%
+  kable()
 
 ```
 
