@@ -15,6 +15,10 @@ header:
 
 ## Current Working Papers 
 
+*The effect of knowledge of racial covenants on attitudes towards redistribution* 
+
+*A Conjoint Analysis of Attitudes toward policing decisions in France* 
+
 *The Effect of Delays in Service on Police Legitimacy:  Evidence from Minneapolis 911 Calls*
 
 *Calling for Help:  Modeling Third-Party Counterbalancing on Coup Risk*
