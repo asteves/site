@@ -30,7 +30,7 @@ The [Delta method](https://en.wikipedia.org/wiki/Delta_method) is a result conce
 
 [^1]: With extreme apologies to Wooldridge (2010).
 
-The most famous theorem I know, the Central Limit Theorem, implies that when *n* gets large, the distribution of the difference between the sample mean and the population mean \$\mu\$ when multiplied by \$\sqrt{n}\$ converges in distribution to a normal distribution \$N(0,\sigma^2)\$.
+The most famous theorem I know, the Central Limit Theorem, implies that when *n* gets large, the distribution of the difference between the sample mean and the population mean `\(\mu\)` when multiplied by `\(\sqrt{n}\)` converges in distribution to a normal distribution `\(N(0,\sigma^2)\)`.
 
 Like the Central Limit Theorem, the Delta method tells us something about the asymptotic behavior of functions of random variables. Specifically, we can approximate the asymptotic behavior of functions over the random variable.
 
@@ -38,19 +38,19 @@ Like the Central Limit Theorem, the Delta method tells us something about the as
 
 One reason as this [nice post](https://www.jepusto.com/delta-method-and-2sls-ses/) by James Pustejovsky points out is that you already do use it if you've ever estimated anything by 2SLS. Anytime you have a ratio estimator, the delta method is a way of construction standard errors. To be even more general, the delta method is useful in any situation where we want to form confidence intervals for nonlinear functions of parameters.
 
-Suppose have a smooth function \$g()\$ that has parameter \$\beta\$ and we have an estimate \$b\$ from some consistent, normally distributed estimator for the parameter, then that estimator converges to an asymptotically normal distribution. Via Taylor's Theorem since \$g()\$ is continuous and derivable up to some \$k^{th}\$ derivative (\$k \geq 2\$), then at our function evaluated at \$b\$ is:
+Suppose have a smooth function `\(g()\)` that has parameter `\(\beta\)` and we have an estimate `\(b\)` from some consistent, normally distributed estimator for the parameter, then that estimator converges to an asymptotically normal distribution. Via Taylor's Theorem since `\(g()\)` is continuous and derivable up to some `\(k^{th}\)` derivative ($k \geq 2$), then at our function evaluated at `\(b\)` is:
 
 $$
 g(b) \approx g(\beta) + \nabla g(\beta)'(b-\beta)
 $$
 
-also known as the mean value expansion. We can subtract \$g(\beta)\$ from each side to get:
+also known as the mean value expansion. We can subtract `\(g(\beta)\)` from each side to get:
 
 $$
 g(b) - g(\beta) \approx \nabla g(\beta)'(b-\beta)
 $$
 
-We'll multiply both sides by \$\sqrt{n}\$ because we can and because it gives us the following nice property.[^2] Since \$\beta\$ is a constant and \$b\$ is a consistent estimator for it,
+We'll multiply both sides by `\(\sqrt{n}\)` because we can and because it gives us the following nice property.[^2] Since `\(\beta\)` is a constant and `\(b\)` is a consistent estimator for it,
 
 [^2]: Cameron and Trevedi (2005, p. 231); Wooldridge (2010, p. 45)
 
@@ -61,10 +61,10 @@ $$
 converges in distribution to
 
 $$
-N(0, \nabla g(\beta)'*\sum_b * \nabla g(\beta))
+N(0, \nabla g(\beta)^T*\sum_b * \nabla g(\beta))
 $$
 
-where the middle term represents the variance covariance matrix. That \$\nabla\$ is the symbol for the gradient of the function, which is the "vector differential operator" and when applied to a function on a multi-dimensional domain is the vector of partial derivatives, which we evaluate at a given point.
+where the middle term represents the variance covariance matrix. That `\(\nabla\)` is the symbol for the gradient of the function, which is the "vector differential operator" and when applied to a function on a multi-dimensional domain is the vector of partial derivatives, which we evaluate at a given point.
 
 The appeal of the delta method is that we get an analytic approximation of a function's behavior by using asymptotic properties, which can be computationally pretty simple. Depending on what we're calculated, it might actually secretly be something we've already been doing under a different name. Of course, we could also just bootstrap the thing, but that's less fun now isn't it.
 
@@ -80,9 +80,9 @@ What does that mean for the delta method? Well it means that the authors have a 
 
 The authors find that in their design the estimate of the ACTE for the full sample on specific support for the #MeToo movement is 0.19 with a confidence interval of \[-0.01, 0.39\].
 
-How did they get those numbers? Trust me when I tell you that this is an interesting paper and you should read it. The extremely short version is that they estimate a function \$g(x,y) = \frac{x}{y}\$. To get a confidence interval via the delta method, we need to find the standard deviation of the asymptotic distribution of this estimator, which is equivalent to the square root of the variance of the distribution. From above, we know that we need get three terms \$\nabla g(\beta)\$, the variance covariance matrix, and \$\nabla g(\beta)'\$.
+How did they get those numbers? Trust me when I tell you that this is an interesting paper and you should read it. The extremely short version is that they estimate a function `\(g(x,y) = \frac{x}{y}\)`. To get a confidence interval via the delta method, we need to find the standard deviation of the asymptotic distribution of this estimator, which is equivalent to the square root of the variance of the distribution. From above, we know that we need get three terms `\(\nabla g(\beta)\)`, the variance covariance matrix, and `\(\nabla g(\beta)'\)`.
 
-Let's go in order. The gradient is just the vector of all the partial derivatives of \$g(x,y)\$ with respect to each variable.
+Let's go in order. The gradient is just the vector of all the partial derivatives of `\(g(x,y)\)` with respect to each variable.
 
 $$
 \nabla g(\beta) =\begin{bmatrix}
@@ -113,7 +113,7 @@ Great, now we have all three terms (since one is just the transpose of something
 
 $$
 \begin{align}
-V[b] &= \nabla g(b)'\sum_b \nabla g(b) \\\\
+V[b] &= \nabla g(b)^T\sum_b \nabla g(b) \\\\
 V[b] &= .010 \\\\
 SE[b] &= \sqrt(V[b]) \\\\
 SE[b] &= .102
