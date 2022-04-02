@@ -20,8 +20,6 @@ image:
 projects: []
 ---
 
-## Introduction
-
 A friend recently asked me a question about the delta method, which sent me briefly into a cold sweat trying to remember a concept from my first year methods sequence. In the spirit of notes to myself, here's a post explaining what it is, why you might want to use it, and how to calculate it with R.
 
 ## What is the Delta Method?
