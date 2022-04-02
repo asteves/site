@@ -78,7 +78,7 @@ What does that mean for the delta method? Well it means that the authors have a 
 
 ![](images/Screen%20Shot%202022-04-01%20at%208.34.14%20PM.png)
 
-The authors find that in their design the estimate of the ACTE for the full sample on specific support for the #MeToo movement is 0.19 with a confidence interval of \[-0.01, 0.39\].
+The authors find that in their design the estimate of the ACTE for the full sample on specific support for the #MeToo movement is 0.19 with a confidence interval of [-0.01, 0.39].
 
 How did they get those numbers? Trust me when I tell you that this is an interesting paper and you should read it. The extremely short version is that they estimate a function $g(x,y) = \frac{x}{y}$. To get a confidence interval via the delta method, we need to find the standard deviation of the asymptotic distribution of this estimator, which is equivalent to the square root of the variance of the distribution. From above, we know that we need get three terms $\nabla g(\beta)$, the variance covariance matrix, and $\nabla g(\beta)'$.
 
