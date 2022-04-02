@@ -179,4 +179,4 @@ upp_b = estimate + 1.96*se_b
 |lwr_b    | -0.01|
 |upp_b    |  0.39|
 
-Voila.
+Voila. Confidence Intervals.

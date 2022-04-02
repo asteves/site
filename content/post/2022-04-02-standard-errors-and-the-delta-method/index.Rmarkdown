@@ -177,4 +177,4 @@ upp_b = estimate + 1.96*0.102
 knitr::kable(round(c(estimate = estimate, lwr_b = lwr_b, upp_b = upp_b),2))
 ```
 
-Voila.
+Voila. Confidence Intervals.
