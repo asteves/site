@@ -1,0 +1,279 @@
+---
+title: Weighted Standard Errors in R
+author: R package build
+date: '2022-04-02'
+slug: []
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-04-02T12:12:55-07:00'
+featured: no
+draft: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+I was recently working on a problem that required me to take a weighted
+standard error of a difference in means function. While R does have a
+`weighted.mean()` function, it does not have a similar function for
+weighted variance. That sent me down a bit of a rabbit hole to figure
+out how to calculate the weighted standard error of the mean. This post
+is a short introduction to weighted averages and weighted variances, and
+also presents the correct way to calculate the standard error of a
+weighted mean. I also include R functions as a reference to myself and
+anyone else who stumbles upon this issue in the future.
+
+## Weighted Averages
+
+Weighted averages show up often in data analysis. There are two reasons
+for this, one conceptual and one practical. The conceptual reason is
+that just about every estimand of interest is itself an average. Why is
+this? That pesky pesky fundamental problem of causal inference. Since
+causal effects are defined by comparing potential outcomes, and only one
+outcome can ever be observed for an individual, the problem of causal
+inference is a missing data problem.[^1] As a consequence, we require
+multiple units to make any inference, and have to make do with an
+average instead of individual causal effects. ATE? *Average!* CATE?
+*Conditional Average*! LATE? *Local Average*! Everything is an average.
+
+[^1]: Rubin 1979
+
+Normally, the set up for causal inference tends to make an implicit
+assumption that the causal effect for every unit is constant.
+Practically, we probably should never believe that to be true for
+anything interesting. The treatment effect should be heterogeneous,
+which means that the estimand of interest is going to be a weighted
+average.
+
+The practical reason that weighted averages show up often is that the
+definition of an average itself is a definition of a weighted sum.
+Normally it is introduced like this:
+
+$$
+\mu = \frac{1}{n}\sum_i^n x_i 
+$$
+
+We can generalize that definition to deal with weights.
+
+$$
+\mu = \frac{\sum_i^nw_ix_i}{\sum_i^nw_i}
+$$
+
+where the $w_i$ indicates the weight for each unit. If the weights are
+all equal $w_i = \frac{1}{n}$, and that formula reduces to the usual
+definition of an average.
+
+In R by hand
+
+```{r}
+weighted.average <- function(x, w){
+    ## Sum of the weights 
+    sum.w <- sum(w, na.rm = T)
+    ## Sum of the weighted $x_i$ 
+    xw <- sum(w*x, na.rm = T)
+    
+    ## Return the weighted average 
+    return(xw/sum.w)
+}
+```
+
+In action, we can see that with equal weights this reduces to the usual
+mean function.
+
+```{r}
+x <- c(1,2,3,4)
+w <- c(1,1,1,1)
+
+## test against R's built in mean function
+weighted.average(x, w) == mean(x)
+```
+
+When the weights are unequal, this returns what we expect.
+
+```{r}
+x2 <- c(1,2,3,4)
+w2 <- c(2,1,2,3)
+
+## Test against R's built in weighted.mean function
+weighted.average(x2, w2) == weighted.mean(x2, w2)
+```
+
+## Weighted Variance
+
+So far so good, and at least in R there are default functions to do
+these calculations for us.
+
+The trouble arises when we are interested in the uncertainty of our
+calculation, as would occur in a sample of data. We would like to know
+what is the variance of a weighted average. To find our formula we can
+derive this from the definition of variance.
+
+Define $W = \sum_i^n w_i$ and $\bar{x} = \frac{1}{W}\sum_i^nw_ix_i$
+which is the weighted average. Then:
+
+$$\begin{aligned}
+V[\bar{x}] &= V[\frac{1}{W}\sum_i^nw_ix_i]\\
+V[\bar{x}] &= \sum_i^nV[\frac{w_i}{W}x_i] \\
+V[\bar{x}] &= \sum_i^n\left(\frac{w_i}{W}\right)^2V[x_i] \\
+V[\bar{x}] &= V[x]\sum_i^n\left(\frac{w_i}{W}\right)^2 
+\end{aligned}$$
+
+What's going on in the derivation. Line 1 is simply the definition of
+variance. In Line 2 we use a property that the variance of independent
+sums is equal to the sum of the variances. Line 3 is an application of
+the fact that $V[aX] = a^2V[X]$. Line 4 is due to the fact that sum of
+the variances of $x_i$ is just $V[x]$ which can pulled out of the
+summation. Note that if all the weights are equal, the weights fraction
+reduces to $\frac{1}{n}$. To see this, consider the example above with
+equal weights. Each $\frac{w_i}{W} = \frac{1}{n}$ so the total sum is
+$n\frac{1}{n^2}$ which reduces to $\frac{1}{n}$ after cancelling terms.
+
+Normally when we consider a weighted average, we are thinking of the
+case where we want to give more weight to some points rather than
+others. For example, if we take a survey of 100 people and weight by
+self-identified race, some points will get larger weight.[^2] In my
+work, this is the dominant weighting scenario to worry about. If we use
+the usual standard error of the mean formula described in footnote 2 in
+this case we will end up with [a very unstable estimate of the standard
+error of the mean as weights become
+uneven](https://seismo.berkeley.edu/~kirchner/Toolkits/Toolkit_12.pdf).
+
+[^2]: This contrasts from a situation where all of our respondents have
+    equal weight but some of the points have larger uncertainties than
+    others. I'm not focusing on that case here. In that case, the
+    calculation of the standard error is done by the usual approach but
+    including weights in the formula.
+
+    $$
+    SE[\bar{x}] = \frac{\sqrt{\frac{n}{n-1}\frac{\sum_i^n w_i(x_i -\bar{x})^2}{\sum_i^n w_i}}}{\sqrt{n}}
+    $$
+
+    If the weights are all equal this reduces to the usual definition of
+    the standard error. If they are unequal but inversely proportional
+    to the individual uncertainties then this is unbiased.
+
+```{r}
+## Function to calculate standard error with weights 
+## Incorrect in case where weights imply meaning and not
+## uncertainty
+bad_se <- function(x, w){
+    n = length(x)
+    numerator = sum(w*(x-weighted.average(x,w))^2)
+    denominator = sum(w)
+    correction = n/(n-1)
+    var_x = (correction * (numerator/denominator))/n
+    return(sqrt(var_x))
+}
+```
+
+To see why, consider a case where we place a massive amount of weight on
+one observation in a sequence. Here we generate every integer from 1 to
+100 and see what happens when we use the usual standard error.
+
+```{r}
+x4 <- seq(1,100,1)
+w4 <- c(rep(1,99),10000)
+avg = round(weighted.average(x4,w4),2)
+se_avg = round(bad_se(x4,w4),2)
+```
+
+```{r, echo = F}
+knitr::kable(c(`average` = avg, `se` = se_avg))
+```
+
+The average is close to but not quite 100, which makes sense because the
+last value of x has a massive weight compared to every other value. The
+standard error though is functionally zero because the last weight is
+dominating every other value. What is happening here is that the
+*effective degrees of freedom* is very small. The last point has such a
+large weight that it dominates all the other points, and we are not
+correcting for this switch.[^3] Instead of doing what we expect, become
+larger because the weights are uneven, this estimate of the standard
+error of the mean goes to zero.
+
+[^3]: Incidentally, on the topic of everything being an average, a
+    similar thing happens in a regression. [Aronow and Samii
+    (2015)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ajps.12185)
+    show that a multiple regression yields a weighted estimate of our
+    coefficient of interest where observations with less predictable
+    treatment get more weight. Observations with zero weights contribute
+    nothing to our estimates. As a result, the effective sample in an
+    OLS regression without an unconfounded assignment mechanism may be
+    much smaller than the nominal *n.*
+
+We should thus correct for this loss of degrees of freedom by getting
+the effective sample size and use it in our standard error
+calculation.[^4]
+
+[^4]: <https://en.wikipedia.org/wiki/Effective_sample_size>
+
+$$
+n_{eff} = \frac{(\sum_i^nw_i)^2}{\sum_i^nw_i^2}
+$$
+
+Note that when all the weights are equal, the effective sample size is
+identical to the nominal sample size because the numerator is $n^2$ and
+the denominator is $n$. However, if the weights are dominated by a
+single point, then the effective sample size will converge to 1. To see
+this imagine that we have two points, and the second is 100 times as
+important as the first.
+
+$$
+n = \frac{(1+100)^2}{(1+10000)} \\
+n = \frac{101^2}{10001} \\
+n = 1.02
+$$
+
+By using the effective n, we will get an unbiased estimate of the
+standard error. Here's how to write this function in R.
+
+```{r}
+weighted.se.mean <- function(x, w, na.rm = T){
+    ## Remove NAs 
+    if (na.rm) {
+      i <- !is.na(x)
+        w <- w[i]
+        x <- x[i]
+    }
+    
+    ## Calculate effective N and correction factor
+    n_eff <- (sum(w))^2/(sum(w^2))
+    correction = n_eff/(n_eff-1)
+    
+    ## Get weighted variance 
+    numerator = sum(w*(x-weighted.average(x,w))^2)
+    denominator = sum(w)
+    
+    ## get weighted standard error of the mean 
+    se_x = sqrt((correction * (numerator/denominator))/n_eff)
+    return(se_x)
+}
+```
+
+We can now apply it to our example case.
+
+```{r}
+x4 <- seq(1,100,1)
+w4 <- c(rep(1,99),10000)
+correct_avg = round(weighted.average(x4,w4),3)
+correct_se = round(weighted.se.mean(x4,w4),3)
+```
+
+```{r,echo = F}
+knitr::kable(c(`average` = correct_avg, `correct_se`=correct_se))
+```
+
+Now we get an estimate of the standard error that is far more in line
+with our expectation.
+
+As a coda, in case you do not want to roll your own function there is a
+weighted variance function in the `Hmisc` R package. This could be used
+with the appropriate corrections to get the same answer.
