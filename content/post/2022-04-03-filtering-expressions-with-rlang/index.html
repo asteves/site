@@ -1,0 +1,242 @@
+---
+title: Filtering expressions with rlang
+author: R package build
+date: '2022-04-03'
+slug: []
+categories:
+  - R
+tags:
+  - R
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2022-04-01T22:30:46-07:00'
+featured: no
+draft: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Suppose you run an experiment and are interested in an estimate of the average treatment effect (ATE) for the full sample as well as sub-groups. An annoying aspect of coding this up is that you end up repeating a lot of code. Programming guides tell us that we should write a function, but if you are like me and reach for the <code>tidyverse</code> you have another problem: non-standard evaluation. It is the bane of my existence because all of the reason that <code>dplyr</code> is so great to use outside of functions makes it a pain to use within a function.</p>
+<p>In the spirit of notes to myself, here’s an example of taking advantage of <code>rlang</code> and <code>purrr</code> to deal with the problem of non-standard evaluation when filtering data to run an experiment.</p>
+<div id="whats-the-problem" class="section level2">
+<h2>What’s the problem?</h2>
+<p>In short, the way that <code>dplyr</code> evaluates with tidy evaluation, a special type of non-standard evaluation.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> A verb like <code>filter()</code> uses data masking so that we can use data variables as if they were environmental variables.</p>
+<pre class="r"><code>df &lt;- tibble(
+    a = c(1,2,3),
+    b = c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;)
+)</code></pre>
+<pre class="r"><code>## Without data masking 
+df[df$b == &quot;B&quot;,]
+
+## With data masking 
+df |&gt;
+    filter(b == &quot;B&quot;)</code></pre>
+<p>This is great for working with data outside of functions because it requires less typing. Unfortunately, it also means that if we use <code>filter()</code> inside a function we write then we need to inject the data-masked argument. Injection is a metaprogramming feature for modifying parts of a program.</p>
+<p>In short, the following function call does not work.</p>
+<pre class="r"><code>f &lt;- function(df, v1, cond){
+    dplyr::filter(.data = df, v1 == cond)
+}
+## This will break 
+f(df, b, &quot;B&quot;)</code></pre>
+<p>What does work? Something like this</p>
+<pre class="r"><code>f2 &lt;- function(df, cond){
+    dplyr::filter(.data = df, {{cond}})
+}</code></pre>
+<p>Now passing our filter condition works as expected.</p>
+<pre class="r"><code>f2(df, b == &quot;B&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">a</th>
+<th align="left">b</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="left">B</td>
+</tr>
+</tbody>
+</table>
+<p>More generally, if we want to pass arbitrary number of conditions</p>
+<pre class="r"><code>f3 &lt;- function(df, ...){
+    dplyr::filter(.data = df, ...)
+}</code></pre>
+<p>We can now pass multiple filter conditions.</p>
+<pre class="r"><code>f3(df, b == &quot;B&quot; | a == 1)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">a</th>
+<th align="left">b</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">B</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="what-if-i-have-a-lot-of-expressions" class="section level2">
+<h2>What if I have a lot of expressions?</h2>
+<p>Note that typing all of those individual expressions within a function argument is asking for failure. Furthermore, what if we want to use this function later for something else? It would be nice to pass a set of expressions to our function. Enter <code>rlang</code> and the <a href="https://rlang.r-lib.org/reference/injection-operator.html">injection operator</a>.</p>
+<p>The injection operator (<code>!!</code>) injects a value or expression into another expression before R evaluates the code. Every data-masking verb in the tidyverse supports injection. To deal with lots of expression at once, we make use of the <em>symbolize and inject</em> pattern.</p>
+<pre class="r"><code>f4 &lt;- function(df, expr){
+    dplyr::filter(.data = df, !!expr)
+}</code></pre>
+<p>The power of this pattern shows up when we apply it with <code>purrr</code> functional programming. A minimal example:</p>
+<pre class="r"><code>express &lt;-rlang::exprs(
+  a = a != 2,
+  B = b %in% c(&quot;A&quot;, &quot;B&quot;))
+
+purrr::map2_dfr(.x = list(df), .y = express, .f = f4)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">a</th>
+<th align="left">b</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="left">C</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">B</td>
+</tr>
+</tbody>
+</table>
+<p>Note that on purpose there’s an extra row created here. This is just to illustrate the pattern.</p>
+</div>
+<div id="using-this-pattern-for-ates" class="section level2">
+<h2>Using this pattern for ATEs</h2>
+<p>Let’s return to the original puzzle about using the same data set and being interested in subgroups. Suppose we have a function that will calculate the average treatment effect (ATE) and output the lower and upper bound of the confidence interval.</p>
+<pre class="r"><code>ate &lt;- function(outcome, treatment){
+    
+    ## first get rid of non-missing observations
+    treatment &lt;- treatment[!is.na(outcome)]
+    outcome &lt;- outcome[!is.na(outcome)]
+    
+    treated &lt;- outcome[treatment == 1]
+    not_treated &lt;- outcome[treatment == 0]
+    
+    N1 &lt;- length(na.omit(treated))
+    N0 &lt;- length(na.omit(not_treated))
+    
+    ## Calculate the difference in means 
+    mean_treated &lt;- mean(treated)
+    mean_control &lt;- mean(not_treated)
+    ate &lt;- mean_treated - mean_control
+    
+    ## Standard Error Calculation 
+    ## Use the usual Neyman Approximation
+    var1 &lt;- sum((treated - mean(treated))^2) / (N1 - 1)
+    var0 &lt;- sum((not_treated - mean(not_treated))^2) / (N0 - 1)
+    
+    ## Take sqrt to get SE
+    se_ate &lt;- sqrt(var1/N1 + var0/N0)
+    
+    ## Degrees of Freedom calculation 
+    df_numerator &lt;- (var1/N1 + var0/N0)^2
+    df_denominator &lt;- (var1^2/(N1^2*(N1-1))) + (var0^2/(N0^2*(N0-1)))
+    
+    degrees_free &lt;- df_numerator/df_denominator
+    
+    ## Now plug it in with the inverse 
+    ## cdf of the t-distribution qt(x, df)
+    lwr_bound &lt;- ate - qt(.975, degrees_free)*se_ate
+    upp_bound &lt;- ate + qt(.975, degrees_free)*se_ate
+    
+    return(c(ATE = ate,
+             lwr_bound = lwr_bound,
+             upp_bound = upp_bound))
+}</code></pre>
+<p>Pretend that our data frame looks like the following:</p>
+<pre class="r"><code>set.seed(1234)
+df &lt;- tibble(
+    C = c(rep(&quot;e&quot;,
+              100)),
+    R = rbinom(100, 
+               1, 
+               prob = c(0.5, 0.5)),
+    P = rbinom(100, 
+               1, 
+               prob = c(0.5, 0.5)),
+    treatment = sample(c(rep(0,50), 
+                         rep(1,50)),
+                       100, 
+                       replace = F),
+    outcome = runif(100)*10
+)</code></pre>
+<p>We can imagine that we ran multiple different types of experiments, or multiple conditions. We also have four subgroups because <span class="math inline">\(R, P \in \{0,1\}\)</span>. That gives five total ATEs we might be interested, the overall and the four subgroups. Using the pattern from above, here’s a functional programming way to get all of them at once.</p>
+<pre class="r"><code>## filter inside a function 
+results &lt;- function(df, filters){
+    tmp &lt;- df |&gt; 
+        filter(!!filters) |&gt;
+        select(outcome, treatment) 
+    
+    ate(tmp[&quot;outcome&quot;], tmp[&quot;treatment&quot;])
+}
+
+## filter expressions 
+groups &lt;- rlang::exprs(
+    o = C == &quot;e&quot;,
+    r0 = C == &quot;e&quot; &amp; R == 0,
+    r1 = C == &quot;e&quot; &amp; R == 1,
+    p0 = C == &quot;e&quot; &amp; P == 0, 
+    p1 = C == &quot;e&quot; &amp; P == 1
+    
+)
+
+## purrr away 
+purrr::map2_dfr(.x = list(df), 
+                        .y = groups, 
+                        .f = results) |&gt;
+    ## Make a coefficient plot
+    mutate(condition = c(&quot;o&quot;, &quot;r0&quot;, &quot;r1&quot;, &quot;p0&quot;, &quot;p1&quot;)) |&gt;
+    ggplot(aes(x = ATE, y = condition, color = condition))+
+    geom_point()+
+    geom_vline(xintercept = 0,
+               linetype = 2)+
+    geom_errorbarh(aes(xmin = lwr_bound, xmax = upp_bound))+
+    theme_minimal()+
+    xlab(&quot;Treatment Effect&quot;)+
+    ylab(&quot;Subgroup&quot;)+
+    theme(legend.title = element_blank())+
+    ggtitle(&quot;Example Experiment Runs&quot;)+
+    ggsave(filename = &quot;~/Desktop/file.png&quot;)</code></pre>
+<div class="figure">
+<img src="images/file.png" alt="" />
+<p class="caption">Treatment Effect Coefficient Plot Example</p>
+</div>
+<p>I think this is pretty cool, and another way of solving this type of problem. Programming with non-standard evaluation is a big topic, so I make no claims that this is the best possible way of doing this, but it does run reasonably quickly even on datasets much larger than the toy one here.</p>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Consult the <a href="https://dplyr.tidyverse.org/articles/programming.html">Programming with dplyr</a> vignette for much more detail.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
