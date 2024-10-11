@@ -7,14 +7,11 @@ education: ""
 email: ""
 interests: ""
 name: Alex Stephenson
-organizations:
-- name: University of California, Berkeley
-  url: "https://polisci.berkeley.edu/"
-role: "PhD Student"
+role: """
 social:
 - icon: twitter
   icon_pack: fab
-  link: https://twitter.com/adastephenson
+  link: https://bsky.app/profile/alexstephenson.me
 - icon: github
   icon_pack: fab
   link: https://github.com/asteves
